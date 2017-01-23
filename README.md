@@ -10,7 +10,9 @@ Boilerplate for kick starting a project with the following technologies:
 The various webpack options used have been explained in detailed as comments in the config file. Should help with understanding the nitty-gritty :)
 
 
-### Usage
+# Usage
+
+## Frontend
 
 ```
 npm install
@@ -26,3 +28,21 @@ ESLint with React linting options have been enabled.
 npm run lint
 ```
 
+
+## Backend
+
+Create a virtual environment, if required
+```
+python3 -m venv /path/to/virtualenvs/database-schema-visualizer
+```
+
+Activate virtual environment and install the dependencies
+```
+source /path/to/virtualenvs/database-schema-visualizer/bin/activate
+pip install -r requirements.txt
+```
+
+Run the server
+```
+python server/app.py
+```
