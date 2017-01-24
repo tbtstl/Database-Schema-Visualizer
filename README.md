@@ -44,5 +44,5 @@ pip install -r requirements.txt
 
 Run the server
 ```
-python server/app.py
+python server/application.py
 ```
