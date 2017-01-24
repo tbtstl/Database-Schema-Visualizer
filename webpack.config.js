@@ -49,6 +49,7 @@ const path = require('path');
 
 module.exports = {
   entry: [
+    'whatwg-fetch',
     'webpack-dev-server/client?http://localhost:5000',
     'webpack/hot/dev-server',
     './scripts/index'
