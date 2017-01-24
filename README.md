@@ -13,11 +13,19 @@ The various webpack options used have been explained in detailed as comments in 
 # Usage
 
 ## Frontend
-
+To run the React app:
 ```
 npm install
 npm start
 Open http://localhost:5000
+```
+
+To compile styles:
+```
+gulp
+
+# If modifying sass files, enable a watcher to autocompile to css
+gulp watch
 ```
 
 ### Linting
