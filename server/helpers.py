@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 from datetime import timedelta
+
+from flask import Response
 from flask import make_response, request, current_app
 from functools import update_wrapper
 
@@ -10,8 +13,6 @@ def crossdomain(origin=None, methods=None, headers=None,
                 automatic_options=True):
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
-    if headers is not None and not isinstance(headers, basestring):
-        headers = ', '.join(x.upper() for x in headers)
 
     def get_methods():
         if methods is not None:
@@ -43,3 +44,27 @@ def crossdomain(origin=None, methods=None, headers=None,
         f.provide_automatic_options = False
         return update_wrapper(wrapped_function, f)
     return decorator
+
+
+def error_response(message):
+  response = {'error': message}
+  response_json = json.dumps(response)
+  return Response(response_json, status=400, mimetype='application/json')
+
+
+def get_columns_for_table(conn, table):
+  cursor = conn.cursor()
+  query = 'describe {}'.format(table)
+  cursor.execute(query)
+  results = cursor.fetchall()
+
+  columns = [{
+    'name': col[0],
+    'type': col[1],
+    'nullable': col[2],
+    'key': col[3],
+    'default': col[4],
+    'extra': col[5]
+  } for col in results]
+
+  return columns
