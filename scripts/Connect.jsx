@@ -33,6 +33,7 @@ export default class App extends Component {
       password: this.state.password
     };
     event.preventDefault();
+    this.setState({calloutClassName: ''});
     fetch('http://localhost:5001/connect', {
       method: 'POST',
       headers: {
