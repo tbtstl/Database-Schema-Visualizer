@@ -36,3 +36,6 @@ dist
 .idea
 
 public/*
+
+*.pyc
+server/__pycache__/
