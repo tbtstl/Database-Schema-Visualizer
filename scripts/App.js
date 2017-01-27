@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Router, Route, Link, hashHistory } from 'react-router';
 
 import Content from './Content.jsx';
 

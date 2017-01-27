@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { hashHistory } from 'react-router';
 import 'whatwg-fetch';
 
 export default class App extends Component {
@@ -54,11 +55,14 @@ export default class App extends Component {
         if(resp.error){
           this.setState({calloutText: 'Could not connect: ' + resp.error});
         } else {
+          console.log('all good');
           this.setState({calloutText: 'Successfully Connected to ' + this.state.host});
+          hashHistory.push('/visualizer');
         }
       })
-      .catch(()=>{
-        this.setState('calloutClassName', 'pt-callout pt-intent-danger');
+      .catch((e)=>{
+        console.log(e);
+        this.setState({calloutClassName: 'pt-callout pt-intent-danger'});
         this.setState({calloutText: 'An unknown error occured'});
       });
   }
