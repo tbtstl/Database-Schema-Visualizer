@@ -5,10 +5,31 @@ export default class Visualizer extends Component {
   constructor(props) {
     super(props);
     console.log(props);
+    this.state = {
+      dbName: 'name'
+    }
   }
 
   componentDidMount() {
     // request db schema here
+    fetch('http://localhost:5001/schema')
+      .then((resp)=>{
+        if (resp.status !== 200){
+        } else {
+        }
+        return resp.json();
+      })
+      .then((resp)=>{
+        console.log(resp);
+        if(resp.error){
+        } else {
+          console.log('all good');
+          console.log(resp);
+        }
+      })
+      .catch((e)=>{
+        console.log(e);
+      });
   }
 
   render(){
