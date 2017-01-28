@@ -3,14 +3,17 @@ import {Render} from 'react-dom';
 import {Link} from 'react-router';
 
 import Canvas from './Canvas.jsx'
+import TableList from './TableList.jsx';
 
 export default class Visualizer extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
-      schema: {}
+      schema: {},
+      tables: []
     };
+    this.getTables.bind(this);
+    this.onSchemaChange.bind(this);
   }
 
   componentDidMount() {
@@ -23,21 +26,43 @@ export default class Visualizer extends Component {
         return resp.json();
       })
       .then((resp) => {
-        console.log(resp);
         if (resp.error) {
         } else {
-          console.log('all good');
-          console.log(resp);
-          this.setState({schema: resp});
+          this.setState({schema: resp, tables: this.getTables(resp)});
+          console.log(this.state);
         }
       });
-      // .catch((e) => {
-      //   // console.log(e);
-      // });
+    // .catch((e) => {
+    //   // console.log(e);
+    // });
+  }
+
+  getTables(schema) {
+    let tables = [];
+    console.log(schema);
+    if (!schema) return;
+    Object.keys(schema).forEach((key)=>{
+      console.log(key);
+      if (schema.hasOwnProperty(key)) {
+        tables.push({name: key, columns: schema[key]})
+      }
+    });
+    return tables;
+  }
+
+  onSchemaChange(newSchema){
+    this.setState({schema: newSchema, tables: this.getTables(newSchema)});
   }
 
   render() {
     let schema = this.state.schema;
+    let tables = this.state.tables;
+
+    // Wait for AJAX call to complete before rendering anything
+    if (tables.length <= 0 || !schema){
+      console.log('not rendering visualizer');
+      return null;
+    }
     return (
       <div>
         <nav className="pt-navbar">
@@ -51,7 +76,8 @@ export default class Visualizer extends Component {
             <button className="pt-button pt-minimal pt-icon-style">Layout</button>
           </div>
         </nav>
-        <div className="pt-card pt-elevation-2 content-container">
+        <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
+        <div className="pt-card pt-elevation-1 canvas-container">
           <Canvas schema={schema}/>
         </div>
       </div>

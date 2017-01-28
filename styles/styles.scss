@@ -1,11 +1,17 @@
+@import "variables";
+
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
-.content-container {
+.content-container, .canvas-container {
   margin: 2em;
+}
+
+.canvas-container {
+  margin-left: $sidenav-offset;
 }
 
 .pt-input {
@@ -14,4 +20,11 @@ body {
 
 .goJS-canvas {
   height: 85vh;
+}
+
+.tableList {
+  width: $sidenav-width;
+  background-color: #fff;
+  height: 100%;
+  position: absolute;
 }

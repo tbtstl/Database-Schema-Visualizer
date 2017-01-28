@@ -10,7 +10,6 @@ export default class Canvas extends Component {
     this.state = {
       schema: props.schema
     };
-    console.log('schema: ' + this.state.schema);
     this.renderDiagram.bind(this);
     this.getTableDataArray.bind(this);
     this.getLinkDataArray.bind(this);
@@ -21,7 +20,6 @@ export default class Canvas extends Component {
   }
 
   renderDiagram() {
-    console.log('rendering');
     const $ = go.GraphObject.make;
     const diagram = $(go.Diagram, "canvas", {
       initialContentAlignment: go.Spot.Center,
