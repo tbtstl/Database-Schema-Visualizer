@@ -14,8 +14,8 @@ export default class TableListItem extends Component {
   }
 
   toggleVisibility(e){
-    this.setState({visible: !this.state.visible})
-    this.handleVisibilityToggle(this.state.table.name, e.target.checked);
+    this.setState({visible: !this.state.visible});
+    this.handleVisibilityToggle(this.state.table, e.target.checked);
   }
 
   render() {

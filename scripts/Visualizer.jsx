@@ -29,12 +29,11 @@ export default class Visualizer extends Component {
         if (resp.error) {
         } else {
           this.setState({schema: resp, tables: this.getTables(resp)});
-          console.log(this.state);
         }
-      });
-    // .catch((e) => {
-    //   // console.log(e);
-    // });
+      })
+    .catch((e) => {
+      console.log(e);
+    });
   }
 
   getTables(schema) {
@@ -51,7 +50,7 @@ export default class Visualizer extends Component {
   }
 
   onSchemaChange(newSchema){
-    this.setState({schema: newSchema, tables: this.getTables(newSchema)});
+    this.setState({schema: newSchema});
   }
 
   render() {
