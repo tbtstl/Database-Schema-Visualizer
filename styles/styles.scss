@@ -3,7 +3,6 @@
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
 
 .hide {
@@ -29,9 +28,11 @@ body {
 .tableList {
   width: $sidenav-width;
   background-color: #fff;
-  height: 100%;
+  height: 95%;
   position: absolute;
   padding: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .table-list-item {
