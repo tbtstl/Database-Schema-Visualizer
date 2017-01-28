@@ -12,8 +12,8 @@ export default class Visualizer extends Component {
       schema: {},
       tables: []
     };
-    this.getTables.bind(this);
-    this.onSchemaChange.bind(this);
+    this.getTables = this.getTables.bind(this);
+    this.onSchemaChange = this.onSchemaChange.bind(this);
   }
 
   componentDidMount() {
@@ -28,12 +28,9 @@ export default class Visualizer extends Component {
       .then((resp) => {
         if (resp.error) {
         } else {
-          this.setState({schema: resp, tables: this.getTables(resp)});
+          this.setState({schema: resp.schema, tables: this.getTables(resp.schema)});
         }
-      })
-    .catch((e) => {
-      console.log(e);
-    });
+      });
   }
 
   getTables(schema) {

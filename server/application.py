@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request, Response
 from flask import g
 
 from db import MySQL
-from helpers import crossdomain, error_response, get_columns_for_table
+from helpers import crossdomain, error_response, get_columns_for_table, get_links_from_table
 
 app = Flask(__name__)
 
@@ -49,10 +49,15 @@ def schema():
       table = table[0]
       schema[table] = get_columns_for_table(conn, table)
 
+      link = get_links_from_table(conn, table)
+
+      if link:
+        links[table] = get_links_from_table(conn, table)
+
   except Error as e:
     return error_response(repr(e))
 
-  return jsonify(**schema)
+  return jsonify(**response)
 
 
 @app.route("/connect", methods=["POST", "OPTIONS"])

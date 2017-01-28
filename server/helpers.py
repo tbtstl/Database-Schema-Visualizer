@@ -68,3 +68,21 @@ def get_columns_for_table(conn, table):
   } for col in results]
 
   return columns
+
+def get_links_from_table(conn, table):
+  cursor = conn.cursor()
+  query = "SELECT constraint_name, table_schema, table_name, column_name, referenced_table_schema, referenced_table_name, referenced_column_name from information_schema.key_column_usage where ((referenced_table_name is not null) and (table_name = '{}'))".format(table)
+  cursor.execute(query)
+  results = cursor.fetchall()
+
+  links = [{
+    'constraint_name': result[0],
+    'table_schema': result[1],
+    'table_name': result[2],
+    'column_name': result[3],
+    'referenced_table_schema': result[4],
+    'referenced_table_name': result[5],
+    'referenced_column_name': result[6]
+  } for result in results if result[4]]
+
+  return links
