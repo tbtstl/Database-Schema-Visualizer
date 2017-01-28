@@ -8,14 +8,15 @@ export default class Canvas extends Component {
     super(props);
     console.log(props);
     this.state = {
-      schema: props.schema
+      schema: props.schema,
+      links: props.links
     };
     this.renderDiagram.bind(this);
     this.getTableDataArray.bind(this);
     this.getLinkDataArray.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.renderDiagram();
   }
 
@@ -28,7 +29,7 @@ export default class Canvas extends Component {
       layout: $(go.ForceDirectedLayout),
       'undoManager.isEnabled': true
     });
-    const lightgrad = $(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
+    const lightgrad = $(go.Brush, "Linear", {1: "#E6E6FA", 0: "#FFFAF0"});
 
     const template =
       $(go.Panel, "Horizontal",
@@ -90,37 +91,37 @@ export default class Canvas extends Component {
 
 
     diagram.linkTemplate = $(go.Link, "Link", // the whole link panel
+      {
+        selectionAdorned: true,
+        layerName: "Foreground",
+        reshapable: true,
+        routing: go.Link.AvoidsNodes,
+        corner: 5,
+        curve: go.Link.JumpOver
+      },
+      $(go.Shape,  // the link shape
+        {stroke: "#303B45", strokeWidth: 2.5}),
+      $(go.TextBlock,  // the "from" label
         {
-          selectionAdorned: true,
-          layerName: "Foreground",
-          reshapable: true,
-          routing: go.Link.AvoidsNodes,
-          corner: 5,
-          curve: go.Link.JumpOver
+          textAlign: "center",
+          font: "bold 14px sans-serif",
+          stroke: "#1967B3",
+          segmentIndex: 0,
+          segmentOffset: new go.Point(NaN, NaN),
+          segmentOrientation: go.Link.OrientUpright
         },
-        $(go.Shape,  // the link shape
-          { stroke: "#303B45", strokeWidth: 2.5 }),
-        $(go.TextBlock,  // the "from" label
-          {
-            textAlign: "center",
-            font: "bold 14px sans-serif",
-            stroke: "#1967B3",
-            segmentIndex: 0,
-            segmentOffset: new go.Point(NaN, NaN),
-            segmentOrientation: go.Link.OrientUpright
-          },
-          new go.Binding("text", "text")),
-        $(go.TextBlock,  // the "to" label
-          {
-            textAlign: "center",
-            font: "bold 14px sans-serif",
-            stroke: "#1967B3",
-            segmentIndex: -1,
-            segmentOffset: new go.Point(NaN, NaN),
-            segmentOrientation: go.Link.OrientUpright
-          },
-          new go.Binding("text", "toText"))
-      );
+        new go.Binding("text", "text")),
+      $(go.TextBlock,  // the "to" label
+        {
+          textAlign: "center",
+          font: "bold 14px sans-serif",
+          stroke: "#1967B3",
+          segmentIndex: -1,
+          segmentOffset: new go.Point(NaN, NaN),
+          segmentOrientation: go.Link.OrientUpright
+        },
+        new go.Binding("text", "toText"))
+    );
 
     let data = this.getTableDataArray();
     let links = this.getLinkDataArray();
@@ -128,46 +129,47 @@ export default class Canvas extends Component {
     diagram.model = new go.GraphLinksModel(data, links);
   }
 
-    getTableDataArray() {
-    const $ = go.GraphObject.make;
-    const bluegrad = $(go.Brush, "Linear", { 0: "rgb(150, 150, 250)", 0.5: "rgb(86, 86, 186)", 1: "rgb(86, 86, 186)" });
-    const greengrad = $(go.Brush, "Linear", { 0: "rgb(158, 209, 159)", 1: "rgb(67, 101, 56)" });
-    const redgrad = $(go.Brush, "Linear", { 0: "rgb(206, 106, 100)", 1: "rgb(180, 56, 50)" });
-    const yellowgrad = $(go.Brush, "Linear", { 0: "rgb(254, 221, 50)", 1: "rgb(254, 182, 50)" });
-    return [
-      { key: "Products",
-        items: [ { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad },
-                 { name: "ProductName", iskey: false, figure: "Cube1", color: bluegrad },
-                 { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
-                 { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" } ] },
-      { key: "Suppliers",
-        items: [ { name: "SupplierID", iskey: true, figure: "Decision", color: yellowgrad },
-                 { name: "CompanyName", iskey: false, figure: "Cube1", color: bluegrad },
-                 { name: "ContactName", iskey: false, figure: "Cube1", color: bluegrad },
-                 { name: "Address", iskey: false, figure: "Cube1", color: bluegrad } ] },
-      { key: "Categories",
-        items: [ { name: "CategoryID", iskey: true, figure: "Decision", color: yellowgrad },
-                 { name: "CategoryName", iskey: false, figure: "Cube1", color: bluegrad },
-                 { name: "Description", iskey: false, figure: "Cube1", color: bluegrad },
-                 { name: "Picture", iskey: false, figure: "TriangleUp", color: redgrad } ] },
-      { key: "Order Details",
-        items: [ { name: "OrderID", iskey: true, figure: "Decision", color: yellowgrad },
-                 { name: "ProductID", iskey: true, figure: "Decision", color: yellowgrad },
-                 { name: "UnitPrice", iskey: false, figure: "MagneticData", color: greengrad },
-                 { name: "Quantity", iskey: false, figure: "MagneticData", color: greengrad },
-                 { name: "Discount", iskey: false, figure: "MagneticData", color: greengrad } ] },
-    ];
+  getTableDataArray() {
+    let data = [];
+    const schema = this.state.schema;
+    Object.keys(schema).forEach((key) => {
+      let node = {};
+      node.key = key;
+      node.items = [];
+      // Format the table columns
+      for (let i = 0; i < schema[key].length; i++){
+        let column = {};
+        column.name = schema[key][i].name;
+        column.iskey = schema[key][i].key !== "";
+        column.figure = schema[key][i].key === "" ? "LineH" : schema[key][i].key === "PRI" ? "Diamond" : "TriangleUp";
+        node.items.push(column);
+      }
+
+      data.push(node);
+    });
+
+    return data;
   }
 
-  getLinkDataArray(){
-    return [
-      { from: "Products", to: "Suppliers", text: "0..N", toText: "1" },
-      { from: "Products", to: "Categories", text: "0..N", toText: "1" },
-      { from: "Order Details", to: "Products", text: "0..N", toText: "1" }
-    ];
+  getLinkDataArray() {
+    let data = [];
+    const links = this.state.links;
+    Object.keys(links).forEach((key)=>{
+
+      for(let i = 0; i < links[key].length; i++){
+        let table = links[key];
+        let link = {};
+        link.from = table[i].table_name;
+        link.to = table[i].referenced_table_name;
+        link.text = "0..N";
+        link.toText = "1";
+        data.push(link)
+      }
+    });
+    return data;
   }
 
-  render(){
+  render() {
     return (
       <div id="canvas" className="goJS-canvas"></div>
     )

@@ -10,10 +10,11 @@ export default class Visualizer extends Component {
     super(props);
     this.state = {
       schema: {},
-      tables: []
+      tables: [],
+      links: {}
     };
-    this.getTables.bind(this);
-    this.onSchemaChange.bind(this);
+    this.getTables = this.getTables.bind(this);
+    this.onSchemaChange = this.onSchemaChange.bind(this);
   }
 
   componentDidMount() {
@@ -28,19 +29,16 @@ export default class Visualizer extends Component {
       .then((resp) => {
         if (resp.error) {
         } else {
-          this.setState({schema: resp, tables: this.getTables(resp)});
+          this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links});
         }
-      })
-    .catch((e) => {
-      console.log(e);
-    });
+      });
   }
 
   getTables(schema) {
     let tables = [];
     console.log(schema);
     if (!schema) return;
-    Object.keys(schema).forEach((key)=>{
+    Object.keys(schema).forEach((key) => {
       console.log(key);
       if (schema.hasOwnProperty(key)) {
         tables.push({name: key, columns: schema[key]})
@@ -49,18 +47,22 @@ export default class Visualizer extends Component {
     return tables;
   }
 
-  onSchemaChange(newSchema){
+  onSchemaChange(newSchema) {
     this.setState({schema: newSchema});
   }
 
   render() {
     let schema = this.state.schema;
     let tables = this.state.tables;
+    let links = this.state.links;
 
     // Wait for AJAX call to complete before rendering anything
-    if (tables.length <= 0 || !schema){
+    if (tables.length <= 0 || !schema || !links) {
       console.log('not rendering visualizer');
-      return null;
+      return (<div className="pt-callout pt-icon-info-sign">
+        <h5>Loading</h5>
+        The canvas is rendering, please wait
+      </div>);
     }
     return (
       <div>
@@ -77,7 +79,7 @@ export default class Visualizer extends Component {
         </nav>
         <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
         <div className="pt-card pt-elevation-1 canvas-container">
-          <Canvas schema={schema}/>
+          <Canvas schema={schema} links={links}/>
         </div>
       </div>
     );
