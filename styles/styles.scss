@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .content-container {
@@ -12,5 +13,5 @@ body {
 }
 
 .goJS-canvas {
-  height: 90%;
+  height: 85vh;
 }
