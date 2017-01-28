@@ -8,7 +8,8 @@ export default class Canvas extends Component {
     super(props);
     console.log(props);
     this.state = {
-      schema: props.schema
+      schema: props.schema,
+      links: props.links
     };
     this.renderDiagram.bind(this);
     this.getTableDataArray.bind(this);
@@ -151,11 +152,21 @@ export default class Canvas extends Component {
   }
 
   getLinkDataArray() {
-    return [
-      {from: "Products", to: "Suppliers", text: "0..N", toText: "1"},
-      {from: "Products", to: "Categories", text: "0..N", toText: "1"},
-      {from: "Order Details", to: "Products", text: "0..N", toText: "1"}
-    ];
+    let data = [];
+    const links = this.state.links;
+    Object.keys(links).forEach((key)=>{
+
+      for(let i = 0; i < links[key].length; i++){
+        let table = links[key];
+        let link = {};
+        link.from = table[i].table_name;
+        link.to = table[i].referenced_table_name;
+        link.text = "0..N";
+        link.toText = "1";
+        data.push(link)
+      }
+    });
+    return data;
   }
 
   render() {
