@@ -36,6 +36,8 @@ def close_db(error):
 @crossdomain(origin='http://localhost:5000')
 def schema():
   schema = {}
+  links = {}
+  response = {'schema': schema, 'links': links}
 
   try:
     conn = get_db()
