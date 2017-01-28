@@ -6,6 +6,10 @@ body {
   overflow: hidden;
 }
 
+.hide {
+  display: none;
+}
+
 .content-container, .canvas-container {
   margin: 2em;
 }
@@ -27,4 +31,13 @@ body {
   background-color: #fff;
   height: 100%;
   position: absolute;
+  padding: 0;
+}
+
+.table-list-item {
+}
+
+.center-horizontal {
+  margin: 0 auto;
+  width: 80%;
 }
