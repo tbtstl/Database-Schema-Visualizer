@@ -36,10 +36,8 @@ export default class Visualizer extends Component {
 
   getTables(schema) {
     let tables = [];
-    console.log(schema);
     if (!schema) return;
     Object.keys(schema).forEach((key) => {
-      console.log(key);
       if (schema.hasOwnProperty(key)) {
         tables.push({name: key, columns: schema[key]})
       }
@@ -58,7 +56,6 @@ export default class Visualizer extends Component {
 
     // Wait for AJAX call to complete before rendering anything
     if (tables.length <= 0 || !schema || !links) {
-      console.log('not rendering visualizer');
       return (<div className="pt-callout pt-icon-info-sign">
         <h5>Loading</h5>
         The canvas is rendering, please wait
