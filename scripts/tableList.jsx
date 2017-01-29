@@ -6,7 +6,6 @@ import TableListItem from './tableListItem.jsx'
 export default class TableList extends Component {
   constructor(props) {
     super(props);
-    console.log(props.schema);
     this.state = {
       schema: props.schema,
       tables: props.tables
@@ -22,12 +21,11 @@ export default class TableList extends Component {
     } else {
       delete schema[table.name];
     }
-    this.triggerSchemaChange(this.state.schema);
+    this.triggerSchemaChange(schema);
   }
 
   render() {
     let tables = this.state.tables || [];
-    console.log(tables);
     return (
       <div className="tableList pt-card pt-elevation-3">
         <div className="pt-card pt-elevation-0"><h5 className="center-horizontal">Table List</h5></div>

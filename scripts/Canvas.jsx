@@ -11,18 +11,33 @@ export default class Canvas extends Component {
       schema: props.schema,
       links: props.links
     };
+    this.diagram = null;
     this.renderDiagram.bind(this);
+    this.destroyDiagram.bind(this);
     this.getTableDataArray.bind(this);
     this.getLinkDataArray.bind(this);
   }
 
   componentDidMount() {
+    console.log('mounted');
+    this.renderDiagram();
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      schema: nextProps.schema,
+      links: nextProps.links
+    });
+  }
+
+  componentDidUpdate(){
+    this.destroyDiagram();
     this.renderDiagram();
   }
 
   renderDiagram() {
     const $ = go.GraphObject.make;
-    const diagram = $(go.Diagram, "canvas", {
+    this.diagram = $(go.Diagram, "canvas", {
       initialContentAlignment: go.Spot.Center,
       allowDelete: false,
       allowCopy: false,
@@ -46,7 +61,7 @@ export default class Canvas extends Component {
       );
 
 
-    diagram.nodeTemplate = $(go.Node, "Auto",  // the whole node panel
+    this.diagram.nodeTemplate = $(go.Node, "Auto",  // the whole node panel
       {
         selectionAdorned: true,
         resizable: true,
@@ -90,7 +105,7 @@ export default class Canvas extends Component {
     );  // end Node
 
 
-    diagram.linkTemplate = $(go.Link, "Link", // the whole link panel
+    this.diagram.linkTemplate = $(go.Link, "Link", // the whole link panel
       {
         selectionAdorned: true,
         layerName: "Foreground",
@@ -126,7 +141,11 @@ export default class Canvas extends Component {
     let data = this.getTableDataArray();
     let links = this.getLinkDataArray();
 
-    diagram.model = new go.GraphLinksModel(data, links);
+    this.diagram.model = new go.GraphLinksModel(data, links);
+  }
+
+  destroyDiagram() {
+    this.diagram.div = null;
   }
 
   getTableDataArray() {
@@ -155,7 +174,7 @@ export default class Canvas extends Component {
     let data = [];
     const links = this.state.links;
     Object.keys(links).forEach((key)=>{
-
+      if (!this.state.schema[key]) return;
       for(let i = 0; i < links[key].length; i++){
         let table = links[key];
         let link = {};
