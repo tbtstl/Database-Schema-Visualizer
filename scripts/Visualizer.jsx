@@ -11,10 +11,12 @@ export default class Visualizer extends Component {
     this.state = {
       schema: {},
       tables: [],
-      links: {}
+      links: {},
+      imageRequested: false
     };
     this.getTables = this.getTables.bind(this);
     this.onSchemaChange = this.onSchemaChange.bind(this);
+    this.handleImageButtonClick = this.handleImageButtonClick.bind(this);
   }
 
   componentDidMount() {
@@ -49,10 +51,15 @@ export default class Visualizer extends Component {
     this.setState({schema: newSchema});
   }
 
+  handleImageButtonClick(){
+    this.setState({imageRequested: true});
+  }
+
   render() {
     let schema = this.state.schema;
     let tables = this.state.tables;
     let links = this.state.links;
+    let imageRequested = this.state.imageRequested;
 
     // Wait for AJAX call to complete before rendering anything
     if (tables.length <= 0 || !schema || !links) {
@@ -68,7 +75,7 @@ export default class Visualizer extends Component {
             <div className="pt-navbar-heading"><Link to="/">Database Schema Visualizer</Link></div>
           </div>
           <div className="pt-navbar-group pt-align-right">
-            <button className="pt-button pt-minimal pt-icon-export">Export Image</button>
+            <button className="pt-button pt-minimal pt-icon-export" onClick={this.handleImageButtonClick}>Export Image</button>
             <span className="pt-navbar-divider"></span>
             <button className="pt-button pt-minimal pt-icon-comparison">Show all attributes</button>
             <button className="pt-button pt-minimal pt-icon-style">Layout</button>
@@ -76,7 +83,7 @@ export default class Visualizer extends Component {
         </nav>
         <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
         <div className="pt-card pt-elevation-1 canvas-container">
-          <Canvas schema={schema} links={links}/>
+          <Canvas schema={schema} links={links} imageRequested={imageRequested}/>
         </div>
       </div>
     );
