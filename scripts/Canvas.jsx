@@ -6,7 +6,6 @@ import go from 'gojs';
 export default class Canvas extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       schema: props.schema,
       links: props.links
@@ -20,7 +19,6 @@ export default class Canvas extends Component {
   }
 
   componentDidMount() {
-    console.log('mounted');
     this.renderDiagram();
   }
 
@@ -199,8 +197,6 @@ export default class Canvas extends Component {
     let img = this.diagram.makeImage();
     let url = img.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     window.open(url);
-    console.log('image?');
-    console.log(img);
   }
 
   render() {

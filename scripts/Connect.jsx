@@ -73,7 +73,6 @@ export default class App extends Component {
         return resp.json();
       })
       .then((resp) => {
-        console.log(resp);
         if (resp.error) {
           this.setState({calloutText: 'Could not connect: ' + resp.error});
         } else {
@@ -97,8 +96,6 @@ export default class App extends Component {
   }
 
   projectSelected(e){
-    console.log(e.target.value);
-    console.log(this.state.projects);
     let project = this.state.projects[e.target.value];
     Object.keys(project).forEach((key)=>{
       this.setState({[key]: project[key]})
