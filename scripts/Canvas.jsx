@@ -16,6 +16,7 @@ export default class Canvas extends Component {
     this.destroyDiagram.bind(this);
     this.getTableDataArray.bind(this);
     this.getLinkDataArray.bind(this);
+    this.getImageFromCanvas.bind(this);
   }
 
   componentDidMount() {
@@ -24,10 +25,16 @@ export default class Canvas extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({
-      schema: nextProps.schema,
-      links: nextProps.links
-    });
+    if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links){
+      this.setState({
+        schema: nextProps.schema,
+        links: nextProps.links
+      });
+    }
+
+    if(nextProps.imageRequested){
+      this.getImageFromCanvas()
+    }
   }
 
   componentDidUpdate(){
@@ -186,6 +193,14 @@ export default class Canvas extends Component {
       }
     });
     return data;
+  }
+
+  getImageFromCanvas(){
+    let img = this.diagram.makeImage();
+    let url = img.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+    window.open(url);
+    console.log('image?');
+    console.log(img);
   }
 
   render() {
