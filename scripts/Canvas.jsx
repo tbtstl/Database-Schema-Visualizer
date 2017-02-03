@@ -24,10 +24,11 @@ export default class Canvas extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links){
+    if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links || nextProps.layout !== this.state.layout){
       this.setState({
         schema: nextProps.schema,
-        links: nextProps.links
+        links: nextProps.links,
+        layout: nextProps.layout
       });
     }
 
@@ -49,6 +50,7 @@ export default class Canvas extends Component {
       circular: go.CircularLayout,
       layeredDigraph: go.LayeredDigraphLayout
       };
+
     this.diagram = $(go.Diagram, "canvas", {
       initialContentAlignment: go.Spot.Center,
       allowDelete: false,
