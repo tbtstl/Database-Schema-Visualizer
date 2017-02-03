@@ -29,7 +29,7 @@ export default class App extends Component {
 
   componentWillMount(){
     this.state.projects = cookie.load('projects') || {};
-    if(this.state.projects){
+    if(Object.keys(this.state.projects).length){
       this.state.hideProjects = false;
     }
   }
@@ -50,7 +50,7 @@ export default class App extends Component {
       password: this.state.password
     };
 
-    if(!this.state.projects.hasOwnProperty(this.state.projectName) && this.state.projectName.length > 0){
+    if(this.state.projectName.length > 0){
       let projects = this.state.projects;
       Object.assign(projects, {[this.state.projectName]: form});
       cookie.save('projects', projects, {path: '/'});
