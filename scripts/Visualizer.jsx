@@ -59,6 +59,7 @@ export default class Visualizer extends Component {
     let schema = this.state.schema;
     let tables = this.state.tables;
     let links = this.state.links;
+    let layout = "grid";
     let imageRequested = this.state.imageRequested;
 
     // Wait for AJAX call to complete before rendering anything
@@ -83,7 +84,7 @@ export default class Visualizer extends Component {
         </nav>
         <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
         <div className="pt-card pt-elevation-1 canvas-container">
-          <Canvas schema={schema} links={links} imageRequested={imageRequested}/>
+          <Canvas schema={schema} links={links} imageRequested={imageRequested} layout={layout}/>
         </div>
       </div>
     );

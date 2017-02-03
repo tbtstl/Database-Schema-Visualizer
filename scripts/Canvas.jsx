@@ -8,7 +8,8 @@ export default class Canvas extends Component {
     super(props);
     this.state = {
       schema: props.schema,
-      links: props.links
+      links: props.links,
+      layout: props.layout
     };
     this.diagram = null;
     this.renderDiagram.bind(this);
@@ -42,11 +43,17 @@ export default class Canvas extends Component {
 
   renderDiagram() {
     const $ = go.GraphObject.make;
+    const layoutMap = {
+      grid: go.GridLayout,
+      forceDirected: go.ForceDirectedLayout,
+      circular: go.CircularLayout,
+      layeredDigraph: go.LayeredDigraphLayout
+      };
     this.diagram = $(go.Diagram, "canvas", {
       initialContentAlignment: go.Spot.Center,
       allowDelete: false,
       allowCopy: false,
-      layout: $(go.ForceDirectedLayout),
+      layout: $(layoutMap[this.state.layout]),
       'undoManager.isEnabled': true
     });
     const lightgrad = $(go.Brush, "Linear", {1: "#E6E6FA", 0: "#FFFAF0"});
