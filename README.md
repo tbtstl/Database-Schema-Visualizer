@@ -54,3 +54,20 @@ Run the server
 ```
 python server/application.py
 ```
+
+## Test Database
+Start the MySQL server
+```
+sudo mysqld
+```
+
+Open a MySQL CLI and create the test database
+```
+mysql -u <username> -p
+> source testDB.sql;
+```
+
+Ensure the database was created correctly by using the database
+```
+> use northwind
+```
