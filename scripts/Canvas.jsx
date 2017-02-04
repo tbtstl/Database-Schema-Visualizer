@@ -25,6 +25,10 @@ export default class Canvas extends Component {
   }
 
   componentWillReceiveProps(nextProps){
+    /*
+    Validate the nextProps. If the props require a rerender, set the state and implicitly do so.
+    If the nextProps are requesting an image, get the image from the canvas.
+     */
     if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links || nextProps.layout !== this.state.layout || nextProps.showAttributes !== this.state.showAttributes){
       this.setState({
         schema: nextProps.schema,
@@ -40,11 +44,18 @@ export default class Canvas extends Component {
   }
 
   componentDidUpdate(){
+    /*
+    Each time the component is updated, the goJS diagram must be destroyed and rebuilt to update.
+     */
     this.destroyDiagram();
     this.renderDiagram();
   }
 
   renderDiagram() {
+    /*
+    Render the diagram according to the state settings. Most of this code is cloned from
+      http://gojs.net/latest/samples/entityRelationship.html
+     */
     const $ = go.GraphObject.make;
     const layoutMap = {
       grid: go.GridLayout,
@@ -166,12 +177,16 @@ export default class Canvas extends Component {
   }
 
   getTableDataArray() {
+    /*
+    Manipulate the state's schema in order to create an array of tables as goJS nodes. Return an array of nodes.
+     */
     let data = [];
     const schema = this.state.schema;
     Object.keys(schema).forEach((key) => {
       let node = {};
       node.key = key;
       node.items = [];
+
       // Format the table columns
       for (let i = 0; i < schema[key].length; i++){
         let column = {};
@@ -188,10 +203,15 @@ export default class Canvas extends Component {
   }
 
   getLinkDataArray() {
+    /*
+    Manipulate the state's links in order to create an array of relationships as goJS links. Return an array of links.
+     */
     let data = [];
     const links = this.state.links;
     Object.keys(links).forEach((key)=>{
       if (!this.state.schema[key]) return;
+
+      // Format the links
       for(let i = 0; i < links[key].length; i++){
         let table = links[key];
         let link = {};
@@ -206,6 +226,10 @@ export default class Canvas extends Component {
   }
 
   getImageFromCanvas(){
+    /*
+    Create an image element from the goJS canvas and change its source to be downloadable.
+     Once changed, the new url is opened in a separate window.
+     */
     let img = this.diagram.makeImage();
     let url = img.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     window.open(url);

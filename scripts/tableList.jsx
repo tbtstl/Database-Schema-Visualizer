@@ -15,6 +15,10 @@ export default class TableList extends Component {
   }
 
   onToggleVisibility(table, isVisible) {
+    /*
+    When a table's visibility is toggled, remove the table from this component's schema and call the schema change prop
+      callback from the visualizer.
+     */
     let schema = JSON.parse(JSON.stringify(this.state.schema));
     if(isVisible){
       schema[table.name] = table.columns;

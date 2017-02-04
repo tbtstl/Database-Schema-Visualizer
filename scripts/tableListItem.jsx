@@ -14,6 +14,9 @@ export default class TableListItem extends Component {
   }
 
   toggleVisibility(e){
+    /*
+    When the visibility checkbox is toggled, trigger the prop callback.
+     */
     this.setState({visible: !this.state.visible});
     this.handleVisibilityToggle(this.state.table, e.target.checked);
   }

@@ -25,7 +25,9 @@ export default class Visualizer extends Component {
   }
 
   componentDidMount() {
-    // request db schema here
+    /*
+    As soon as the component is mounted, request the schema from the server. If an error occurs, render an alert.
+     */
     fetch('http://localhost:5001/schema')
       .then((resp) => {
         if (resp.status !== 200) {
@@ -42,6 +44,9 @@ export default class Visualizer extends Component {
   }
 
   getTables(schema) {
+    /*
+    Format the table objects for the TableList Component
+     */
     let tables = [];
     if (!schema) return;
     Object.keys(schema).forEach((key) => {
@@ -53,6 +58,9 @@ export default class Visualizer extends Component {
   }
 
   onSchemaChange(newSchema) {
+    /*
+    Trigger a waterfall re-render of this component and its subcomponents when the schema is changed.
+     */
     this.setState({schema: newSchema});
   }
 
@@ -69,6 +77,9 @@ export default class Visualizer extends Component {
   }
 
   render() {
+    /*
+    If the schema has been loaded from the database, render the visualizer. Else, render a loading screen.
+     */
     let schema = this.state.schema;
     let tables = this.state.tables;
     let links = this.state.links;

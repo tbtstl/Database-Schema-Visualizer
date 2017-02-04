@@ -8,7 +8,6 @@ export default class Content extends Component {
 
   render() {
     return (
-      // Add your component markup and other subcomponent references here.
       <div className="pt-card pt-elevation-2 content-container">
         <h1>Instructions</h1>
         <hr/>
@@ -22,8 +21,9 @@ export default class Content extends Component {
 
         <h5>Notes</h5>
         <ol className="pt-list">
-          <li>Projects are created automatically by filling in the "Project Name" field on the form.</li>
+          <li>Projects are created automatically by filling in the "Project Name" field on the form and connecting.</li>
           <li>To remove a project, click on the "x" beside the project name</li>
+          <li>To edit a project, simply click on the project, fill in the project name field, edit the data, and reconnect.</li>
           <li>The MySQL database should be running on port 3306 to connect</li>
         </ol>
 
@@ -36,6 +36,10 @@ export default class Content extends Component {
           <li>Change the layout of the diagram by clicking the layout button on the navigation bar</li>
           <li>Remove a table from the diagram by unselecting it from the table list</li>
           <li>Export an image of the diagram by clicking the export image button on the navigation bar</li>
+        </ol>
+        <h5>Notes</h5>
+        <ol>
+          <li>The larger the database, the longer it will take to render changes to the diagram such as toggling attributes and changing layouts. Be patient when using these features.</li>
         </ol>
       </div>
     );
