@@ -12,6 +12,7 @@ export default class App extends Component {
     this.state = {
       projectName: '',
       host: '',
+      port: 3306,
       dbName: '',
       username: '',
       password: '',
@@ -45,6 +46,7 @@ export default class App extends Component {
     event.preventDefault();
     let form = {
       host: this.state.host,
+      port: this.state.port,
       dbName: this.state.dbName,
       username: this.state.username,
       password: this.state.password
@@ -147,6 +149,10 @@ export default class App extends Component {
             <label className="pt-label">
               Host
               <input name="host" value={this.state.host} type="text" className="pt-input" onChange={this.handleChange}/>
+            </label>
+            <label className="pt-label">
+              Port
+              <input name="port" value={this.state.port} type="text" className="pt-input" onChange={this.handleChange}/>
             </label>
             <label className="pt-label">
               Database Name
