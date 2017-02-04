@@ -42,3 +42,18 @@ body {
   margin: 0 auto;
   width: 80%;
 }
+
+.projectCardContainer {
+  display: inline-flex;
+  justify-content: space-between;
+
+  .pt-card {
+    width: 226px;
+    margin: 10px;
+  }
+}
+
+
+.float-right {
+  float: right;
+}

@@ -18,7 +18,6 @@ export default class App extends Component {
       calloutText: '',
       projects: {},
       hideProjects: true, //hide
-      selectedProject: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -88,18 +87,32 @@ export default class App extends Component {
   }
 
   getProjectOptions(){
-    let options = [<option key="-1" value=''></option>];
+    {/*let options = [<option key="-1" value=''></option>];*/}
+    let options = [];
     Object.keys(this.state.projects).forEach((key, index)=>{
-      options.push(<option key={index} value={key}>{key}</option>);
+      options.push(
+        <div className="pt-card pt-elevation-0 pt-interactive" onClick={()=>{this.projectSelected(key)}}>
+          <a>{key}</a><a className="pt-icon-cross float-right" onClick={()=>{this.removeProject(key)}} />
+        </div>
+      );
     });
     return options;
   }
 
-  projectSelected(e){
-    let project = this.state.projects[e.target.value];
+  projectSelected(projectKey){
+    let project = this.state.projects[projectKey];
+    if(!project) return;
     Object.keys(project).forEach((key)=>{
       this.setState({[key]: project[key]})
     })
+  }
+
+  removeProject(projectKey){
+    let projects = this.state.projects;
+    if(delete projects[projectKey]){
+      cookie.save('projects', projects, {path: '/'});
+      this.setState({projects: projects});
+    }
   }
 
 
@@ -121,10 +134,8 @@ export default class App extends Component {
           <h3>Connect to a MySQL Database</h3>
           <div className={this.state.hideProjects ? "hide" : ""}>
             <h5>Select from a previous project</h5>
-            <div className="pt-select">
-              <select onChange={this.projectSelected} value={this.state.selectedProject}>
-                {this.getProjectOptions()}
-              </select>
+            <div className="projectCardContainer">
+              {this.getProjectOptions()}
             </div>
           </div>
           <hr />
