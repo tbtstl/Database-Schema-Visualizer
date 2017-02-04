@@ -14,8 +14,6 @@ export default class App extends Component {
         </div>
         <div className="pt-navbar-group pt-align-right">
           <Link to="/connect"><button className="pt-button pt-minimal pt-intent-primary pt-icon-log-in">Connect</button></Link>
-          <span className="pt-navbar-divider"></span>
-          <button className="pt-button pt-minimal pt-icon-cog"></button>
         </div>
         </nav>
         <div>
