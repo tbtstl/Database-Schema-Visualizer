@@ -25,6 +25,7 @@ export default class TableList extends Component {
     } else {
       delete schema[table.name];
     }
+    this.setState({schema: schema});
     this.triggerSchemaChange(schema);
   }
 
