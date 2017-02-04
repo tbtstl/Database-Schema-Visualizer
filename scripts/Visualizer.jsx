@@ -15,7 +15,8 @@ export default class Visualizer extends Component {
       links: {},
       layout: "forceDirected",
       imageRequested: false,
-      showAttributes: false
+      showAttributes: false,
+      error: ''
     };
     this.getTables = this.getTables.bind(this);
     this.onSchemaChange = this.onSchemaChange.bind(this);
@@ -30,16 +31,17 @@ export default class Visualizer extends Component {
      */
     fetch('http://localhost:5001/schema')
       .then((resp) => {
-        if (resp.status !== 200) {
-        } else {
-        }
         return resp.json();
       })
       .then((resp) => {
         if (resp.error) {
+          this.setState({error: resp.error});
         } else {
           this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links});
         }
+      })
+      .catch(()=>{
+        this.setState({error: 'An Unknown error has occured.'})
       });
   }
 
@@ -88,12 +90,23 @@ export default class Visualizer extends Component {
     let showAttributes = this.state.showAttributes;
 
     // Wait for AJAX call to complete before rendering anything
-    if (tables.length <= 0 || !schema || !links) {
+    if ((tables.length <= 0 || !schema || !links) && !this.state.error.length) {
       return (<div className="pt-callout pt-icon-info-sign">
         <h5>Loading</h5>
         The canvas is rendering, please wait
       </div>);
     }
+
+    if (this.state.error.length){
+      return (
+        <div className="pt-callout pt-intent-danger pt-icon-error">
+          <h5>Error</h5>
+          <p>{this.state.error}</p>
+          <p><Link to="/connect">Try again</Link></p>
+        </div>
+      );
+    }
+
     const layoutMenu = (
       <Menu>
         <MenuItem text="Grid" onClick={()=>{this.handleLayoutButtonClick("grid")}}/>
