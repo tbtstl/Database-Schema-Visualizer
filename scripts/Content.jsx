@@ -24,7 +24,7 @@ export default class Content extends Component {
         <ol className="pt-list">
           <li>Projects are created automatically by filling in the "Project Name" field on the form.</li>
           <li>To remove a project, click on the "x" beside the project name</li>
-          <li>The MySQL database must be running on port 3306 to connect</li>
+          <li>The MySQL database should be running on port 3306 to connect</li>
         </ol>
 
         <hr />
