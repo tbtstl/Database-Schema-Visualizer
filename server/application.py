@@ -65,23 +65,25 @@ def schema():
 def connect():
   data = json.loads(request.data.decode("utf-8"))
   host = data.get('host', 'localhost')
+  port = data.get('port', 3306)
   db_name = data.get('dbName')
   username = data.get('username', 'root')
   password = data.get('password', 'password')
 
-  if not all((host, db_name, username, password)):
-    return error_response('Host, database name, username, and password are all required.')
-
-  app.config['MYSQL_USER'] = str(username)
-  app.config['MYSQL_PASSWORD'] = str(password)
-  app.config['MYSQL_DB'] = str(db_name)
-  app.config['MYSQL_HOST'] = str(host)
+  if not all((host, port, db_name, username, password)):
+    return error_response('Host, port, database name, username, and password are all required.')
 
   try:
+    app.config['MYSQL_USER'] = str(username)
+    app.config['MYSQL_PASSWORD'] = str(password)
+    app.config['MYSQL_DB'] = str(db_name)
+    app.config['MYSQL_HOST'] = str(host)
+    app.config['MYSQL_PORT'] = int(port)
+
     conn = get_db()
 
-  except Error as e:
-    return error_response(repr(e))
+  except Exception as e:
+    return error_response(str(e))
 
   return jsonify({'success': True})
 
