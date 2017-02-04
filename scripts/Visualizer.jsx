@@ -14,11 +14,14 @@ export default class Visualizer extends Component {
       tables: [],
       links: {},
       layout: "forceDirected",
-      imageRequested: false
+      imageRequested: false,
+      showAttributes: false
     };
     this.getTables = this.getTables.bind(this);
     this.onSchemaChange = this.onSchemaChange.bind(this);
     this.handleImageButtonClick = this.handleImageButtonClick.bind(this);
+    this.handleLayoutButtonClick = this.handleLayoutButtonClick.bind(this);
+    this.toggleAttributes = this.toggleAttributes.bind(this);
   }
 
   componentDidMount() {
@@ -61,12 +64,17 @@ export default class Visualizer extends Component {
     this.setState({layout: layout});
   }
 
+  toggleAttributes(){
+    this.setState({showAttributes: this.state.showAttributes !== true});
+  }
+
   render() {
     let schema = this.state.schema;
     let tables = this.state.tables;
     let links = this.state.links;
-    let layout = "grid";
+    let layout = this.state.layout;
     let imageRequested = this.state.imageRequested;
+    let showAttributes = this.state.showAttributes;
 
     // Wait for AJAX call to complete before rendering anything
     if (tables.length <= 0 || !schema || !links) {
@@ -91,7 +99,7 @@ export default class Visualizer extends Component {
           </div>
           <div className="pt-navbar-group pt-align-right">
             <button className="pt-button pt-minimal pt-icon-export" onClick={this.handleImageButtonClick}>Export Image</button>
-            <button className="pt-button pt-minimal pt-icon-comparison">Show all attributes</button>
+            <button className="pt-button pt-minimal pt-icon-comparison" onClick={this.toggleAttributes}>{showAttributes ? "Hide" : "Show"} all attributes</button>
             <span className="pt-navbar-divider"></span>
             <Popover content={layoutMenu} position={Position.BOTTOM}>
               <button className="pt-button pt-minimal pt-icon-style">Layout</button>
@@ -100,7 +108,7 @@ export default class Visualizer extends Component {
         </nav>
         <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
         <div className="pt-card pt-elevation-1 canvas-container">
-          <Canvas schema={schema} links={links} imageRequested={imageRequested} layout={layout}/>
+          <Canvas schema={schema} links={links} imageRequested={imageRequested} layout={layout} showAttributes={showAttributes}/>
         </div>
       </div>
     );
