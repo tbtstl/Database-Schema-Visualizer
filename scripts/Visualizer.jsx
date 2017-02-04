@@ -16,7 +16,8 @@ export default class Visualizer extends Component {
       layout: "forceDirected",
       imageRequested: false,
       showAttributes: false,
-      error: ''
+      error: '',
+      loading: true
     };
     this.getTables = this.getTables.bind(this);
     this.onSchemaChange = this.onSchemaChange.bind(this);
@@ -35,13 +36,13 @@ export default class Visualizer extends Component {
       })
       .then((resp) => {
         if (resp.error) {
-          this.setState({error: resp.error});
+          this.setState({error: resp.error, loading: false});
         } else {
-          this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links});
+          this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links, loading: false});
         }
       })
       .catch(()=>{
-        this.setState({error: 'An Unknown error has occured.'})
+        this.setState({error: 'An Unknown error has occured.', loading: false});
       });
   }
 
@@ -88,16 +89,25 @@ export default class Visualizer extends Component {
     let layout = this.state.layout;
     let imageRequested = this.state.imageRequested;
     let showAttributes = this.state.showAttributes;
+    let error = this.state.error.length !== 0;
 
     // Wait for AJAX call to complete before rendering anything
-    if ((tables.length <= 0 || !schema || !links) && !this.state.error.length) {
+    if (this.state.loading) {
       return (<div className="pt-callout pt-icon-info-sign">
         <h5>Loading</h5>
         The canvas is rendering, please wait
       </div>);
+    } else if(tables.length <= 0 && !error){
+      return (
+        <div className="pt-callout pt-icon-warning-sign pt-intent-warning">
+          <h5>Database is empty</h5>
+          <p>It appears that the database is empty. There must be at least one table in the database for the visualizer to work.</p>
+          <p><Link to="/connect">Try again</Link></p>
+        </div>
+      );
     }
 
-    if (this.state.error.length){
+    if (error){
       return (
         <div className="pt-callout pt-intent-danger pt-icon-error">
           <h5>Error</h5>
