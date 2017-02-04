@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  padding: 0; }
+
+.hide {
+  display: none; }
+
+.content-container, .canvas-container {
+  margin: 2em; }
+
+.canvas-container {
+  margin-left: 26vh; }
+
+.pt-input {
+  width: 100%; }
+
+.goJS-canvas {
+  height: 85vh; }
+
+.tableList {
+  width: 24vh;
+  background-color: #fff;
+  height: 95%;
+  position: absolute;
+  padding: 0;
+  overflow-y: scroll;
+  overflow-x: hidden; }
+
+.center-horizontal {
+  margin: 0 auto;
+  width: 80%; }
+
+.projectCardContainer {
+  display: inline-flex;
+  justify-content: space-between; }
+  .projectCardContainer .pt-card {
+    width: 226px;
+    margin: 10px; }
+
+.float-right {
+  float: right; }
