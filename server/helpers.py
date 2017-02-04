@@ -47,12 +47,20 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 
 def error_response(message):
+  """
+  A helper function to return a 400 error response
+  :param message: The error message to be returned
+  :return: a Response object with a 400 status and a JSON error
+  """
   response = {'error': message}
   response_json = json.dumps(response)
   return Response(response_json, status=400, mimetype='application/json')
 
 
 def get_columns_for_table(conn, table):
+  """
+  A helper function to describe a table and return a list of the columns on the table.
+  """
   cursor = conn.cursor()
   query = 'describe {}'.format(table)
   cursor.execute(query)
@@ -69,7 +77,11 @@ def get_columns_for_table(conn, table):
 
   return columns
 
+
 def get_links_from_table(conn, table):
+  """
+  A helper function to find all the foreign keys from a specified table and return them as a list of link objects
+  """
   cursor = conn.cursor()
   query = "SELECT constraint_name, table_schema, table_name, column_name, referenced_table_schema, referenced_table_name, referenced_column_name from information_schema.key_column_usage where ((referenced_table_name is not null) and (table_name = '{}'))".format(table)
   cursor.execute(query)

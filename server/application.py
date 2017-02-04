@@ -12,6 +12,9 @@ app = Flask(__name__)
 MT_JSON = 'application/json'
 
 def connect_db():
+  """
+  Connects the application to a MySQL database. This should only be run once.
+  """
   mysql = MySQL()
   mysql.init_app(app)
   return mysql.connection
@@ -27,7 +30,9 @@ def get_db():
 
 @app.teardown_appcontext
 def close_db(error):
-    """Closes the database again at the end of the request."""
+    """
+    Closes the database again at the end of the request.
+    """
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
@@ -35,6 +40,10 @@ def close_db(error):
 @app.route("/schema", methods=["GET"])
 @crossdomain(origin='http://localhost:5000')
 def schema():
+  """
+  Returns a JSON representation of the database schema (and it's FK links) to be used by the client application.
+    If any errors occur while querying the database, a 400 response is returned with an explanation of the error.
+  """
   schema = {}
   links = {}
   response = {'schema': schema, 'links': links}
@@ -63,6 +72,10 @@ def schema():
 @app.route("/connect", methods=["POST", "OPTIONS"])
 @crossdomain(origin='http://localhost:5000')
 def connect():
+  """
+  Returns a success message if the POSTed data successfully connects to the database, else a 400 error response with an
+  error in JSON.
+  """
   data = json.loads(request.data.decode("utf-8"))
   host = data.get('host', 'localhost')
   port = data.get('port', 3306)
@@ -87,6 +100,7 @@ def connect():
 
   return jsonify({'success': True})
 
+# Run the server on port 5001
 if __name__ == "__main__":
     app.run(port=5001)
 
