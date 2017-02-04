@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {hashHistory} from 'react-router';
+import {hashHistory, Link} from 'react-router';
 import cookie from 'react-cookie';
+
 
 import 'whatwg-fetch';
 
@@ -108,13 +109,9 @@ export default class App extends Component {
       <div>
         <nav className="pt-navbar .modifier .pt-fixed-top">
           <div className="pt-navbar-group pt-align-left">
-            <div className="pt-navbar-heading">Database Schema Visualizer</div>
+            <Link to="/"><div className="pt-navbar-heading">Database Schema Visualizer</div></Link>
           </div>
           <div className="pt-navbar-group pt-align-right">
-            <button className="pt-button pt-minimal pt-intent-primary pt-icon-log-in" onClick={() => {this.renderConnectForm()}}>Connect
-            </button>
-            <span className="pt-navbar-divider"></span>
-            <button className="pt-button pt-minimal pt-icon-cog"></button>
           </div>
         </nav>
         <div className="pt-card pt-elevation-2 content-container">

@@ -13,7 +13,7 @@ export default class App extends Component {
           <div className="pt-navbar-heading">Database Schema Visualizer</div>
         </div>
         <div className="pt-navbar-group pt-align-right">
-          <button className="pt-button pt-minimal pt-intent-primary pt-icon-log-in"><Link to="/connect">Connect</Link></button>
+          <Link to="/connect"><button className="pt-button pt-minimal pt-intent-primary pt-icon-log-in">Connect</button></Link>
           <span className="pt-navbar-divider"></span>
           <button className="pt-button pt-minimal pt-icon-cog"></button>
         </div>
