@@ -6,7 +6,6 @@ import Content from './Content.jsx';
 export default class App extends Component {
   render() {
     return (
-      // Add your component markup and other subcomponent references here.
       <div>
       <nav className="pt-navbar .modifier .pt-fixed-top">
         <div className="pt-navbar-group pt-align-left">

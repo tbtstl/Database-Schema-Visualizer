@@ -19,7 +19,7 @@ export default class App extends Component {
       calloutClassName: '',
       calloutText: '',
       projects: {},
-      hideProjects: true, //hide
+      hideProjects: true
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -29,6 +29,10 @@ export default class App extends Component {
   }
 
   componentWillMount(){
+    /*
+    Before rendering the component, load the projects from the cookies.
+     If projects exist, also render the project selection section.
+     */
     this.state.projects = cookie.load('projects') || {};
     if(Object.keys(this.state.projects).length){
       this.state.hideProjects = false;
@@ -36,6 +40,9 @@ export default class App extends Component {
   }
 
   handleChange(event) {
+    /*
+    Helper function to synchronize form values to state variables
+     */
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
@@ -43,6 +50,11 @@ export default class App extends Component {
   }
 
   handleSubmit(event) {
+    /*
+    On submit, create a form object with the data to be sent back to the server. If the project name field is not empty,
+      store the project in the cookies. If the server responds to the request successfully, navigate to the visualizer.
+      Else, display any errors.
+     */
     event.preventDefault();
     let form = {
       host: this.state.host,
@@ -59,6 +71,7 @@ export default class App extends Component {
     }
 
     this.setState({calloutClassName: ''});
+
     fetch('http://localhost:5001/connect', {
       method: 'POST',
       headers: {
@@ -90,9 +103,11 @@ export default class App extends Component {
   }
 
   getProjectOptions(){
-    {/*let options = [<option key="-1" value=''></option>];*/}
+    /*
+    For each project in the cookies, create a project card to render on the form.
+     */
     let options = [];
-    Object.keys(this.state.projects).forEach((key, index)=>{
+    Object.keys(this.state.projects).forEach((key)=>{
       options.push(
         <div className="pt-card pt-elevation-0 pt-interactive" onClick={()=>{this.projectSelected(key)}}>
           <a>{key}</a><a className="pt-icon-cross float-right" onClick={()=>{this.removeProject(key)}} />
@@ -103,6 +118,9 @@ export default class App extends Component {
   }
 
   projectSelected(projectKey){
+    /*
+    Fill out the connect form with the specifications from the selected project
+     */
     let project = this.state.projects[projectKey];
     if(!project) return;
     Object.keys(project).forEach((key)=>{
@@ -111,6 +129,10 @@ export default class App extends Component {
   }
 
   removeProject(projectKey){
+    /*
+    Copy the projects object from the state, remove the specified project, and store the new projects in cookies,
+      updating state.
+     */
     let projects = this.state.projects;
     if(delete projects[projectKey]){
       cookie.save('projects', projects, {path: '/'});
@@ -120,6 +142,9 @@ export default class App extends Component {
 
 
   render(){
+    /*
+    Render the connect form, hiding the project selection if no projects exist.
+     */
     return (
       <div>
         <nav className="pt-navbar .modifier .pt-fixed-top">
