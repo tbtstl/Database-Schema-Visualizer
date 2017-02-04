@@ -9,7 +9,8 @@ export default class Canvas extends Component {
     this.state = {
       schema: props.schema,
       links: props.links,
-      layout: props.layout
+      layout: props.layout,
+      showAttributes: props.showAttributes
     };
     this.diagram = null;
     this.renderDiagram.bind(this);
@@ -24,11 +25,12 @@ export default class Canvas extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links || nextProps.layout !== this.state.layout){
+    if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links || nextProps.layout !== this.state.layout || nextProps.showAttributes !== this.state.showAttributes){
       this.setState({
         schema: nextProps.schema,
         links: nextProps.links,
-        layout: nextProps.layout
+        layout: nextProps.layout,
+        showAttributes: nextProps.showAttributes
       });
     }
 
@@ -106,6 +108,7 @@ export default class Canvas extends Component {
         // the list of Panels, each showing an attribute
         $(go.Panel, "Vertical",
           {
+            visible: this.state.showAttributes,
             name: "LIST",
             row: 1,
             padding: 3,
