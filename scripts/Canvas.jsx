@@ -230,7 +230,7 @@ export default class Canvas extends Component {
     Create an image element from the goJS canvas and change its source to be downloadable.
      Once changed, the new url is opened in a separate window.
      */
-    let img = this.diagram.makeImage();
+    let img = this.diagram.makeImage({scale: 1});
     let url = img.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     window.open(url);
   }
