@@ -6,5 +6,4 @@ import {Menu, MenuItem, Popover, Button, Position} from '@blueprintjs/core';
 import Visualizer from './Visualizer.jsx';
 
 
-export default class Abstraction extends Visualizer {
-};
+export default class Abstraction extends Visualizer {};

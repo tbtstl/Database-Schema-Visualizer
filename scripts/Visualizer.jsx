@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {Render} from 'react-dom';
 import {Link} from 'react-router';
-import {Menu, MenuItem, Popover, Button, Position} from '@blueprintjs/core';
+import {Menu, MenuItem, Popover, Button, Position, PopoverInteractionKind} from '@blueprintjs/core';
 
 import Canvas from './Canvas.jsx'
 import TableList from './tableList.jsx';
+import PersistPopoverContent from './PersistPopoverContent.jsx';
 
 export default class Visualizer extends Component {
   constructor(props) {
@@ -90,6 +91,7 @@ export default class Visualizer extends Component {
     let imageRequested = this.state.imageRequested;
     let showAttributes = this.state.showAttributes;
     let error = this.state.error.length !== 0;
+    let dialogOpen = this.state.dialogOpen;
 
     // Wait for AJAX call to complete before rendering anything
     if (this.state.loading) {
@@ -125,6 +127,9 @@ export default class Visualizer extends Component {
         <MenuItem text="Layered Digraph" onClick={()=>{this.handleLayoutButtonClick("layeredDigraph")}}/>
       </Menu>
     );
+    const persistPopoverContent = (
+      <PersistPopoverContent nameSubmitCallback={(name)=>{console.log(name)}}/>
+    );
     return (
       <div>
         <nav className="pt-navbar">
@@ -132,10 +137,15 @@ export default class Visualizer extends Component {
             <div className="pt-navbar-heading"><Link to="/">Database Schema Visualizer</Link></div>
           </div>
           <div className="pt-navbar-group pt-align-right">
+            <Popover content={persistPopoverContent}
+                     popoverClassName="pt-popover-content-sizing"
+                     position={Position.BOTTOM}>
+                <button className="pt-button pt-minimal pt-icon-presentation">Persist Diagram</button>
+            </Popover>
             <button className="pt-button pt-minimal pt-icon-export" onClick={this.handleImageButtonClick}>Export Image</button>
             <button className="pt-button pt-minimal pt-icon-comparison" onClick={this.toggleAttributes}>{showAttributes ? "Hide" : "Show"} all attributes</button>
             <span className="pt-navbar-divider"></span>
-            <Popover content={layoutMenu} position={Position.BOTTOM}>
+            <Popover content={layoutMenu} position={Position.BOTTOM} isModal="true">
               <button className="pt-button pt-minimal pt-icon-style">Layout</button>
             </Popover>
           </div>
