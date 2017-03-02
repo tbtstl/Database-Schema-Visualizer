@@ -10,9 +10,18 @@ import PersistPopoverContent from './PersistPopoverContent.jsx';
 export default class Visualizer extends Component {
   constructor(props) {
     super(props);
+
+    const defaultLayouts = [
+      {isDefault: true, displayName: "Grid", layoutKey: "grid"},
+      {isDefault: true, displayName: "Force Directed", layoutKey: "forceDirected"},
+      {isDefault: true, displayName: "Circular", layoutKey: "circular"},
+      {isDefault: true, displayName: "Layered Digraph", layoutKey: "layeredDigraph"}
+    ];
+
     this.state = {
       schema: {},
       tables: [],
+      layouts: defaultLayouts,
       links: {},
       layout: "forceDirected",
       imageRequested: false,
@@ -121,10 +130,12 @@ export default class Visualizer extends Component {
 
     const layoutMenu = (
       <Menu>
-        <MenuItem text="Grid" onClick={()=>{this.handleLayoutButtonClick("grid")}}/>
-        <MenuItem text="Force Directed" onClick={()=>{this.handleLayoutButtonClick("forceDirected")}}/>
-        <MenuItem text="Circular" onClick={()=>{this.handleLayoutButtonClick("circular")}}/>
-        <MenuItem text="Layered Digraph" onClick={()=>{this.handleLayoutButtonClick("layeredDigraph")}}/>
+        {
+          this.state.layouts.map(
+            (layout, index) =>
+              <MenuItem text={layout.displayName} key={layout.layoutKey} onClick={()=>{this.handleLayoutButtonClick(layout.layoutKey)}}/>
+          )
+        }
       </Menu>
     );
     const persistPopoverContent = (
