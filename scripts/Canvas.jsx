@@ -251,17 +251,6 @@ export default class Canvas extends Component {
 
   handleLayoutChange(){
     let currentLayout = this.diagram.model.toJson();
-    console.log(currentLayout);
-    // currentLayout.linkData = this.getLinkDataArray();
-    // currentLayout.nodeData = this.getTableDataArray();
-    // currentLayout.showAttributes = this.state.showAttributes;
-    //
-    // for (let i = 0; i < currentLayout.nodeData.length; i++){
-    //   let currNode = this.diagram.findNodeForKey(currentLayout.nodeData[i].key);
-    //   let location = currNode.location.copy();
-    //   currentLayout.nodeData[i].x_pos = location.x;
-    //   currentLayout.nodeData[i].y_pos = location.y;
-    // }
     window.__im_disgusted_in_myself__currentLayout = currentLayout;
   }
 
