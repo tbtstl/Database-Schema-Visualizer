@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 
 import go from 'gojs';
+import cookie from 'react-cookie';
 
 export default class Canvas extends Component {
   constructor(props) {
@@ -18,7 +19,9 @@ export default class Canvas extends Component {
     this.getTableDataArray.bind(this);
     this.getLinkDataArray.bind(this);
     this.getImageFromCanvas.bind(this);
+    this.handleLayoutChange.bind(this);
   }
+
 
   componentDidMount() {
     this.renderDiagram();
@@ -170,6 +173,10 @@ export default class Canvas extends Component {
     let links = this.getLinkDataArray();
 
     this.diagram.model = new go.GraphLinksModel(data, links);
+
+    this.diagram.addDiagramListener("SelectionMoved", (e) => {
+      this.handleLayoutChange();
+    })
   }
 
   destroyDiagram() {
@@ -233,6 +240,21 @@ export default class Canvas extends Component {
     let img = this.diagram.makeImage({scale: 1});
     let url = img.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     window.open(url);
+  }
+
+  handleLayoutChange(){
+    let currentLayout = {};
+    currentLayout.linkData = this.getLinkDataArray();
+    currentLayout.nodeData = this.getTableDataArray();
+    currentLayout.showAttributes = this.state.showAttributes;
+
+    for (let i = 0; i < currentLayout.nodeData.length; i++){
+      let currNode = this.diagram.findNodeForKey(currentLayout.nodeData[i].key);
+      let location = currNode.location.copy();
+      currentLayout.nodeData[i].x_pos = location.x;
+      currentLayout.nodeData[i].y_pos = location.y;
+    }
+    window.__im_disgusted_in_myself__currentLayout = currentLayout;
   }
 
   render() {

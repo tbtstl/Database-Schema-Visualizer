@@ -3,6 +3,8 @@ import {Render} from 'react-dom';
 import {Link} from 'react-router';
 import {Menu, MenuItem, Popover, Button, Position, PopoverInteractionKind} from '@blueprintjs/core';
 
+import cookie from 'react-cookie';
+
 import Canvas from './Canvas.jsx'
 import TableList from './tableList.jsx';
 import PersistPopoverContent from './PersistPopoverContent.jsx';
@@ -17,6 +19,8 @@ export default class Visualizer extends Component {
       {isDefault: true, displayName: "Circular", layoutKey: "circular"},
       {isDefault: true, displayName: "Layered Digraph", layoutKey: "layeredDigraph"}
     ];
+
+    // let layouts = cookie.select(/^layout/);
 
     this.state = {
       schema: {},
@@ -34,11 +38,12 @@ export default class Visualizer extends Component {
     this.handleImageButtonClick = this.handleImageButtonClick.bind(this);
     this.handleLayoutButtonClick = this.handleLayoutButtonClick.bind(this);
     this.toggleAttributes = this.toggleAttributes.bind(this);
+    this.formatNewLayout = this.formatNewLayout.bind(this);
   }
 
   componentDidMount() {
     /*
-    As soon as the component is mounted, request the schema from the server. If an error occurs, render an alert.
+     As soon as the component is mounted, request the schema from the server. If an error occurs, render an alert.
      */
     fetch('http://localhost:5001/schema')
       .then((resp) => {
@@ -51,14 +56,14 @@ export default class Visualizer extends Component {
           this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links, loading: false});
         }
       })
-      .catch(()=>{
+      .catch(() => {
         this.setState({error: 'An Unknown error has occured.', loading: false});
       });
   }
 
   getTables(schema) {
     /*
-    Format the table objects for the TableList Component
+     Format the table objects for the TableList Component
      */
     let tables = [];
     if (!schema) return;
@@ -72,26 +77,30 @@ export default class Visualizer extends Component {
 
   onSchemaChange(newSchema) {
     /*
-    Trigger a waterfall re-render of this component and its subcomponents when the schema is changed.
+     Trigger a waterfall re-render of this component and its subcomponents when the schema is changed.
      */
     this.setState({schema: newSchema});
   }
 
-  handleImageButtonClick(){
+  handleImageButtonClick() {
     this.setState({imageRequested: true});
   }
 
-  handleLayoutButtonClick(layout){
+  handleLayoutButtonClick(layout) {
     this.setState({layout: layout});
   }
 
-  toggleAttributes(){
+  toggleAttributes() {
     this.setState({showAttributes: this.state.showAttributes !== true});
   }
 
+  formatNewLayout(layouts) {
+    this.setState({layouts: layouts});
+  };
+
   render() {
     /*
-    If the schema has been loaded from the database, render the visualizer. Else, render a loading screen.
+     If the schema has been loaded from the database, render the visualizer. Else, render a loading screen.
      */
     let schema = this.state.schema;
     let tables = this.state.tables;
@@ -100,7 +109,6 @@ export default class Visualizer extends Component {
     let imageRequested = this.state.imageRequested;
     let showAttributes = this.state.showAttributes;
     let error = this.state.error.length !== 0;
-    let dialogOpen = this.state.dialogOpen;
 
     // Wait for AJAX call to complete before rendering anything
     if (this.state.loading) {
@@ -108,17 +116,18 @@ export default class Visualizer extends Component {
         <h5>Loading</h5>
         The canvas is rendering, please wait
       </div>);
-    } else if(tables.length <= 0 && !error){
+    } else if (tables.length <= 0 && !error) {
       return (
         <div className="pt-callout pt-icon-warning-sign pt-intent-warning">
           <h5>Database is empty</h5>
-          <p>It appears that the database is empty. There must be at least one table in the database for the visualizer to work.</p>
+          <p>It appears that the database is empty. There must be at least one table in the database for the visualizer
+            to work.</p>
           <p><Link to="/connect">Try again</Link></p>
         </div>
       );
     }
 
-    if (error){
+    if (error) {
       return (
         <div className="pt-callout pt-intent-danger pt-icon-error">
           <h5>Error</h5>
@@ -133,13 +142,15 @@ export default class Visualizer extends Component {
         {
           this.state.layouts.map(
             (layout, index) =>
-              <MenuItem text={layout.displayName} key={layout.layoutKey} onClick={()=>{this.handleLayoutButtonClick(layout.layoutKey)}}/>
+              <MenuItem text={layout.displayName} key={layout.layoutKey} onClick={() => {
+                this.handleLayoutButtonClick(layout.layoutKey)
+              }}/>
           )
         }
       </Menu>
     );
     const persistPopoverContent = (
-      <PersistPopoverContent nameSubmitCallback={(name)=>{console.log(name)}}/>
+      <PersistPopoverContent nameSubmitCallback={this.formatNewLayout} layouts={this.state.layouts}/>
     );
     return (
       <div>
@@ -151,10 +162,13 @@ export default class Visualizer extends Component {
             <Popover content={persistPopoverContent}
                      popoverClassName="pt-popover-content-sizing"
                      position={Position.BOTTOM}>
-                <button className="pt-button pt-minimal pt-icon-presentation">Persist Diagram</button>
+              <button className="pt-button pt-minimal pt-icon-presentation">Persist Diagram</button>
             </Popover>
-            <button className="pt-button pt-minimal pt-icon-export" onClick={this.handleImageButtonClick}>Export Image</button>
-            <button className="pt-button pt-minimal pt-icon-comparison" onClick={this.toggleAttributes}>{showAttributes ? "Hide" : "Show"} all attributes</button>
+            <button className="pt-button pt-minimal pt-icon-export" onClick={this.handleImageButtonClick}>Export Image
+            </button>
+            <button className="pt-button pt-minimal pt-icon-comparison"
+                    onClick={this.toggleAttributes}>{showAttributes ? "Hide" : "Show"} all attributes
+            </button>
             <span className="pt-navbar-divider"></span>
             <Popover content={layoutMenu} position={Position.BOTTOM} isModal="true">
               <button className="pt-button pt-minimal pt-icon-style">Layout</button>
@@ -163,7 +177,8 @@ export default class Visualizer extends Component {
         </nav>
         <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
         <div className="pt-card pt-elevation-1 canvas-container">
-          <Canvas schema={schema} links={links} imageRequested={imageRequested} layout={layout} showAttributes={showAttributes}/>
+          <Canvas schema={schema} links={links} imageRequested={imageRequested} layout={layout}
+                  showAttributes={showAttributes}/>
         </div>
       </div>
     );

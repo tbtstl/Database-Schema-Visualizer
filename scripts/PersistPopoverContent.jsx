@@ -8,7 +8,8 @@ export default class Canvas extends Component {
     super(props);
     this.state = {
       onPersistNameSubmit: props.nameSubmitCallback,
-      layoutName: ''
+      layoutName: '',
+      layouts: props.layouts
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -16,10 +17,19 @@ export default class Canvas extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    let name = this.state.layoutName;
 
-    if (this.state.layoutName.length > 0) {
-      cookie.save();
-      this.state.onPersistNameSubmit(this.state.layoutName);
+    if (name.length > 0) {
+      let currentLayout = window.__im_disgusted_in_myself__currentLayout;
+      let cookieKey = 'layout:' + this.state.layoutName;
+      let newLayout = {};
+      cookie.save(cookieKey, currentLayout, {path: '/'});
+      newLayout.isDefault = false;
+      newLayout.displayName = name;
+      newLayout.layoutKey = name;
+      let layouts = this.state.layouts;
+      layouts.push(newLayout);
+      this.state.onPersistNameSubmit(layouts);
     }
   }
 
