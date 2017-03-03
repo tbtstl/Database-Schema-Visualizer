@@ -94,8 +94,8 @@ export default class Visualizer extends Component {
     this.setState({showAttributes: this.state.showAttributes !== true});
   }
 
-  formatNewLayout(layouts) {
-    this.setState({layouts: layouts});
+  formatNewLayout(layouts, newLayout) {
+    this.setState({layouts: layouts, layout: newLayout});
   };
 
   render() {

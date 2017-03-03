@@ -30,7 +30,7 @@ export default class Canvas extends Component {
       newLayout.model = currentLayout;
       let layouts = this.state.layouts;
       layouts.push(newLayout);
-      this.state.onPersistNameSubmit(layouts);
+      this.state.onPersistNameSubmit(layouts, newLayout);
     }
   }
 
