@@ -71,9 +71,13 @@ export default class Canvas extends Component {
       initialContentAlignment: go.Spot.Center,
       allowDelete: false,
       allowCopy: false,
-      layout: $(layoutMap[this.state.layout]),
       'undoManager.isEnabled': true
     });
+
+    if (this.state.layout.isDefault){
+      this.diagram.layout = $(layoutMap[this.state.layout.layoutKey]);
+    }
+
     const lightgrad = $(go.Brush, "Linear", {1: "#E6E6FA", 0: "#FFFAF0"});
 
     const template =
@@ -169,10 +173,13 @@ export default class Canvas extends Component {
         new go.Binding("text", "toText"))
     );
 
-    let data = this.getTableDataArray();
-    let links = this.getLinkDataArray();
-
-    this.diagram.model = new go.GraphLinksModel(data, links);
+    if(this.state.layout.isDefault){
+      let data = this.getTableDataArray();
+      let links = this.getLinkDataArray();
+      this.diagram.model = new go.GraphLinksModel(data, links);
+    } else {
+      this.diagram.model = go.Model.fromJson(this.state.layout.model);
+    }
 
     this.diagram.addDiagramListener("SelectionMoved", (e) => {
       this.handleLayoutChange();
@@ -243,17 +250,18 @@ export default class Canvas extends Component {
   }
 
   handleLayoutChange(){
-    let currentLayout = {};
-    currentLayout.linkData = this.getLinkDataArray();
-    currentLayout.nodeData = this.getTableDataArray();
-    currentLayout.showAttributes = this.state.showAttributes;
-
-    for (let i = 0; i < currentLayout.nodeData.length; i++){
-      let currNode = this.diagram.findNodeForKey(currentLayout.nodeData[i].key);
-      let location = currNode.location.copy();
-      currentLayout.nodeData[i].x_pos = location.x;
-      currentLayout.nodeData[i].y_pos = location.y;
-    }
+    let currentLayout = this.diagram.model.toJson();
+    console.log(currentLayout);
+    // currentLayout.linkData = this.getLinkDataArray();
+    // currentLayout.nodeData = this.getTableDataArray();
+    // currentLayout.showAttributes = this.state.showAttributes;
+    //
+    // for (let i = 0; i < currentLayout.nodeData.length; i++){
+    //   let currNode = this.diagram.findNodeForKey(currentLayout.nodeData[i].key);
+    //   let location = currNode.location.copy();
+    //   currentLayout.nodeData[i].x_pos = location.x;
+    //   currentLayout.nodeData[i].y_pos = location.y;
+    // }
     window.__im_disgusted_in_myself__currentLayout = currentLayout;
   }
 

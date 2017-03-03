@@ -143,7 +143,7 @@ export default class Visualizer extends Component {
           this.state.layouts.map(
             (layout, index) =>
               <MenuItem text={layout.displayName} key={layout.layoutKey} onClick={() => {
-                this.handleLayoutButtonClick(layout.layoutKey)
+                this.handleLayoutButtonClick(layout)
               }}/>
           )
         }

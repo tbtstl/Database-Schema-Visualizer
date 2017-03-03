@@ -27,6 +27,7 @@ export default class Canvas extends Component {
       newLayout.isDefault = false;
       newLayout.displayName = name;
       newLayout.layoutKey = name;
+      newLayout.model = currentLayout;
       let layouts = this.state.layouts;
       layouts.push(newLayout);
       this.state.onPersistNameSubmit(layouts);
