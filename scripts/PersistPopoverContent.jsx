@@ -29,6 +29,13 @@ export default class Canvas extends Component {
       newLayout.layoutKey = name;
       newLayout.model = currentLayout;
       let layouts = this.state.layouts;
+
+      // if layouts have the same name, remove the stale one and update with the new one
+      for (let i=0; i<layouts.length; i++){
+        if (layouts[i].displayName === name){
+          layouts.splice(i, 1);
+        }
+      }
       layouts.push(newLayout);
       this.state.onPersistNameSubmit(layouts, newLayout);
     }

@@ -56,7 +56,8 @@ export default class Visualizer extends Component {
           this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links, loading: false});
         }
       })
-      .catch(() => {
+      .catch((e) => {
+      console.log(e);
         this.setState({error: 'An Unknown error has occured.', loading: false});
       });
   }
@@ -142,7 +143,7 @@ export default class Visualizer extends Component {
         {
           this.state.layouts.map(
             (layout, index) =>
-              <MenuItem text={layout.displayName} key={layout.layoutKey} onClick={() => {
+              <MenuItem text={layout.displayName} key={index} onClick={() => {
                 this.handleLayoutButtonClick(layout)
               }}/>
           )

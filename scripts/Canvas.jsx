@@ -173,12 +173,18 @@ export default class Canvas extends Component {
         new go.Binding("text", "toText"))
     );
 
-    if(this.state.layout.isDefault){
-      let data = this.getTableDataArray();
-      let links = this.getLinkDataArray();
+    let data = this.getTableDataArray();
+    let links = this.getLinkDataArray();
+    if(this.state.layout.isDefault || !this.diagram.model){
       this.diagram.model = new go.GraphLinksModel(data, links);
     } else {
-      this.diagram.model = go.Model.fromJson(this.state.layout.model);
+      try{
+        this.diagram.model = go.Model.fromJson(this.state.layout.model);
+      }
+      catch (e){
+        this.diagram.model = new go.GraphLinksModel(data, links);
+      }
+
     }
 
     this.diagram.addDiagramListener("SelectionMoved", (e) => {
