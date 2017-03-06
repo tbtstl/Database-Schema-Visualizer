@@ -105,3 +105,122 @@ def connect():
 if __name__ == "__main__":
     app.run(port=5001)
 
+
+@app.route("/abstraction", methods=["GET"])
+@crossdomain(origin='http://localhost:5000')
+def abstraction():
+    """
+  Returns a JSON representation of the abstracted database schema (and it's FK links) to be used by the client application.
+    If any errors occur while querying the database, a 400 response is returned with an explanation of the error.
+  """
+  schema = {}
+  links = {}
+  response = {'schema': schema, 'links': links}
+
+  try:
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('show tables')
+    tables = cursor.fetchall()
+
+    for table in tables:
+      table = table[0]
+      schema[table] = get_columns_for_table(conn, table)
+
+      link = get_links_from_table(conn, table)
+
+      if link:
+        links[table] = get_links_from_table(conn, table)
+
+  """
+  nes is the index of the last abstract entity
+  nes + 1 is the index of the first abstract relationship
+
+  cluster should come out of this section with index 0 up to and including nes with entities
+  """
+
+
+  disjoint = false
+  remaining_rels = schema[:]
+  ordered_rels = OrderAscPk(schema)
+  cluster = []
+  cluster.append(ordered_rels.items(0))
+  del remaining_rels[ordered_rels.items(0)[0]]
+  nes = 0
+  for i in range(1, len(ordered_rels)):
+    R = ordered_rels.items(i)
+    if pk(R[1]) == pk(ordered_rels.items(i-1)[1]): #Might need to hash this comparison
+      cluster[nes] = R
+      del remaining_rels[R[0]]
+    else:
+      disjoint = true
+      for S in cluster: #union of all elements in cluster up to and including nes
+        if not set(pk(R[1])).isdisjoint(pk(S[1])):
+          disjoint = false
+      if disjoint:
+        cluster.append(R)
+        del remaining_rels[R[0]]
+        nes = nes+1
+
+
+  """
+  next section...
+  """
+
+  for R in remaining_rels:
+    i = 0
+    clustered = false
+    while (i <= nes) and not clustered:
+      if not set(pk(R[1])).isdisjoint(pk(S)) # blah balh, incomplete
+        cluster[i] = R
+        del reamining_rels[R[0]]
+        clustered = true
+
+
+  """
+  last section...
+  nes + 1 to nas should be relationships
+  """
+
+  argument = []
+  intersects = []
+  for i in range(nes+1):
+    intersects.append(false)
+  nas = nes + 1
+  first_relationship = true
+  for R in remaining_rels:
+    for i in range(0, nes+1):
+      if pk #blah blah, incomplete
+        intersects[i] = true
+    if first_relationship:
+      for i in range(0, nes+1):
+        argument[0,i] = intersects[i]
+      cluster.append(R)
+      del remaining_rels[R[0]]
+      first_relationship = false
+    else:
+      j = 0
+      found = false
+      while (j <= nas) and not found:
+        if #blah blah, incomplete
+          #some insert
+          del remaining_rels[R[0]]
+          found = true
+        j = j + 1
+      if not found:
+        nas = nas + 1
+        for i in range(0, nes + 1):
+          argument[nas - nes,i] = intersects[i]
+        #insert
+        del remaining_rels[R[0]]
+
+
+  """
+  Should be abstracted from here
+  """
+
+
+  except Error as e:
+    return error_response(repr(e))
+
+  return jsonify(**response)
