@@ -20,12 +20,12 @@ export default class Visualizer extends Component {
       {isDefault: true, displayName: "Layered Digraph", layoutKey: "layeredDigraph"}
     ];
 
-    // let layouts = cookie.select(/^layout/);
+    let layouts = JSON.parse(localStorage.getItem('layouts') || '[]');
 
     this.state = {
       schema: {},
       tables: [],
-      layouts: defaultLayouts,
+      layouts: layouts.length ? layouts : defaultLayouts,
       links: {},
       layout: "forceDirected",
       imageRequested: false,
@@ -96,6 +96,7 @@ export default class Visualizer extends Component {
   }
 
   formatNewLayout(layouts, newLayout) {
+    localStorage.setItem('layouts', JSON.stringify(layouts));
     this.setState({layouts: layouts, layout: newLayout});
   };
 

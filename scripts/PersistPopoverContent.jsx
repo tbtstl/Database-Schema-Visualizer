@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
-import cookie from 'react-cookie';
-
 export default class Canvas extends Component {
   constructor(props) {
     super(props);
@@ -18,12 +16,11 @@ export default class Canvas extends Component {
   handleSubmit(event) {
     event.preventDefault();
     let name = this.state.layoutName;
+    let currentLayout = JSON.parse(localStorage.getItem('currentLayout') || '{}');
+    console.log(currentLayout);
 
-    if (name.length > 0) {
-      let currentLayout = window.__im_disgusted_in_myself__currentLayout;
-      let cookieKey = 'layout:' + this.state.layoutName;
+    if (name.length > 0 && currentLayout) {
       let newLayout = {};
-      cookie.save(cookieKey, currentLayout, {path: '/'});
       newLayout.isDefault = false;
       newLayout.displayName = name;
       newLayout.layoutKey = name;

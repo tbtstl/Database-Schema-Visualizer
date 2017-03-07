@@ -25,6 +25,7 @@ export default class Canvas extends Component {
 
   componentDidMount() {
     this.renderDiagram();
+    localStorage.setItem('currentLayout', JSON.stringify({}));
   }
 
   componentWillReceiveProps(nextProps){
@@ -257,7 +258,7 @@ export default class Canvas extends Component {
 
   handleLayoutChange(){
     let currentLayout = this.diagram.model.toJson();
-    window.__im_disgusted_in_myself__currentLayout = currentLayout;
+    localStorage.setItem('currentLayout', JSON.stringify(currentLayout));
   }
 
   render() {
