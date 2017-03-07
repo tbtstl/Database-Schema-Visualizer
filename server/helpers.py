@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
+from operator import itemgetter
 from datetime import timedelta
+from collections import OrderedDict
 
 from flask import Response
 from flask import make_response, request, current_app
@@ -98,3 +100,19 @@ def get_links_from_table(conn, table):
   } for result in results if result[4]]
 
   return links
+
+def OrderAscPk(schema):
+  """
+  A helper function to return an ordered set of tables. Ordered by cardinality of primary keys.
+  @peram tables: a set of tables to be ordered
+  @return An ordered dict
+  """
+  return OrderedDict(sorted(schema.items(), key=lambda tableTup: (list(map(itemgetter('key'), tableTup[1])).count('PRI'), hash(tuple(map(itemgetter('name'), pk(tableTup[1])))))))
+
+
+def pk(table):
+  """
+  A helper function that returns a sorted list of primary keys that belong to a table.
+  @peram table: A schema item
+  """
+  return sorted(list(filter(lambda col: col['key'] == 'PRI', table)),key=lambda col: col['name'])
