@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 
 import go from 'gojs';
+import cookie from 'react-cookie';
 
 export default class Canvas extends Component {
   constructor(props) {
@@ -18,10 +19,13 @@ export default class Canvas extends Component {
     this.getTableDataArray.bind(this);
     this.getLinkDataArray.bind(this);
     this.getImageFromCanvas.bind(this);
+    this.handleLayoutChange.bind(this);
   }
+
 
   componentDidMount() {
     this.renderDiagram();
+    localStorage.setItem('currentLayout', JSON.stringify({}));
   }
 
   componentWillReceiveProps(nextProps){
@@ -68,9 +72,13 @@ export default class Canvas extends Component {
       initialContentAlignment: go.Spot.Center,
       allowDelete: false,
       allowCopy: false,
-      layout: $(layoutMap[this.state.layout]),
       'undoManager.isEnabled': true
     });
+
+    if (this.state.layout.isDefault){
+      this.diagram.layout = $(layoutMap[this.state.layout.layoutKey]);
+    }
+
     const lightgrad = $(go.Brush, "Linear", {1: "#E6E6FA", 0: "#FFFAF0"});
 
     const template =
@@ -168,8 +176,21 @@ export default class Canvas extends Component {
 
     let data = this.getTableDataArray();
     let links = this.getLinkDataArray();
+    if(this.state.layout.isDefault || !this.diagram.model){
+      this.diagram.model = new go.GraphLinksModel(data, links);
+    } else {
+      try{
+        this.diagram.model = go.Model.fromJson(this.state.layout.model);
+      }
+      catch (e){
+        this.diagram.model = new go.GraphLinksModel(data, links);
+      }
 
-    this.diagram.model = new go.GraphLinksModel(data, links);
+    }
+
+    this.diagram.addDiagramListener("SelectionMoved", (e) => {
+      this.handleLayoutChange();
+    })
   }
 
   destroyDiagram() {
@@ -233,6 +254,11 @@ export default class Canvas extends Component {
     let img = this.diagram.makeImage({scale: 1});
     let url = img.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
     window.open(url);
+  }
+
+  handleLayoutChange(){
+    let currentLayout = this.diagram.model.toJson();
+    localStorage.setItem('currentLayout', JSON.stringify(currentLayout));
   }
 
   render() {
