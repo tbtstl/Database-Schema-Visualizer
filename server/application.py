@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 MT_JSON = 'application/json'
 
+
 def connect_db():
   """
   Connects the application to a MySQL database. This should only be run once.
@@ -20,14 +21,17 @@ def connect_db():
   mysql.init_app(app)
   return mysql.connection
 
+
 def get_db():
   """
   Opens a new database connection if there is none yet for the
     current application context.
   """
+  @print("test")
   if not hasattr(g, 'mysql_db'):
     g.mysql_db = connect_db()
   return g.mysql_db
+
 
 @app.teardown_appcontext
 def close_db(error):
@@ -101,6 +105,7 @@ def connect():
 
   return jsonify({'success': True})
 
+
 # Run the server on port 5001
 if __name__ == "__main__":
     app.run(port=5001)
@@ -171,10 +176,13 @@ def abstraction():
     i = 0
     clustered = false
     while (i <= nes) and not clustered:
-      if not set(pk(R[1])).isdisjoint(pk(S)) # blah balh, incomplete
-        cluster[i] = R
-        del reamining_rels[R[0]]
-        clustered = true
+      if not set(pk(R[1])).isdisjoint(pk(cluster[i])):
+
+        for j in range(nes+1):
+            if i!=j and set(pk(R[1])).isdisjoint(pk(cluster[j])):
+                cluster[i] = R
+                del remaining_rels[R[0]]
+                clustered = true
 
 
   """
@@ -190,7 +198,7 @@ def abstraction():
   first_relationship = true
   for R in remaining_rels:
     for i in range(0, nes+1):
-      if pk #blah blah, incomplete
+      if not set(pk(R[1])).isdisjoint(pk(cluster[i])):
         intersects[i] = true
     if first_relationship:
       for i in range(0, nes+1):
@@ -202,8 +210,10 @@ def abstraction():
       j = 0
       found = false
       while (j <= nas) and not found:
-        if #blah blah, incomplete
-          #some insert
+        for i in range(nes+1):
+          totBool = (intersects[i] == argument[j,i])
+        if totBool:
+          cluster.insert(nes+j, R)         
           del remaining_rels[R[0]]
           found = true
         j = j + 1
@@ -211,7 +221,7 @@ def abstraction():
         nas = nas + 1
         for i in range(0, nes + 1):
           argument[nas - nes,i] = intersects[i]
-        #insert
+        cluster.append(R)
         del remaining_rels[R[0]]
 
 
