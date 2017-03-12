@@ -7,7 +7,7 @@ import Visualizer from './Visualizer.jsx';
 
 
 export default class Abstraction extends Visualizer {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state.abstraction = true;
   }
@@ -25,7 +25,12 @@ export default class Abstraction extends Visualizer {
           this.setState({error: resp.error, loading: false});
         } else {
           let abstraction = this.getAbstraction(resp.schema);
-          this.setState({schema: abstraction.abstractEntities, tables: this.getTables(abstraction.abstractEntities), links: abstraction.links, loading: false});
+          this.setState({
+            schema: abstraction,
+            tables: this.getTables(abstraction.abstractEntities),
+            links: abstraction.links,
+            loading: false
+          });
         }
       })
       .catch((e) => {
@@ -34,6 +39,44 @@ export default class Abstraction extends Visualizer {
       });
   }
 
+  getCanvasTableData() {
+    let data = [];
+    let entities = this.state.schema.abstractEntities;
+    let relationships = this.state.schema.abstractRelationships;
+    if (!entities && !relationships) return data;
+
+    Object.keys(entities).forEach((key)=>{
+      let node = {};
+      node.key = key;
+      node.items = [];
+      node.category = "entity";
+
+      for (let i = 0; i < entities[key].properties.length; i++){
+        let table = {};
+        table.name = entities[key].properties[i].name;
+        node.items.push(table);
+      }
+
+      data.push(node);
+    });
+
+    Object.keys(relationships).forEach((key)=>{
+      let node = {};
+      node.key = key;
+      node.items = [];
+      node.category = "relationship";
+
+      for (let i = 0; i < relationships[key].properties.length; i++){
+        let table = {};
+        table.name = relationships[key].properties[i].name;
+        node.items.push(table);
+      }
+
+      data.push(node);
+    });
+
+    return data;
+  }
   getAbstraction(schema) {
     let abstractRelationships = {};
     let abstractEntities = {};
@@ -250,27 +293,27 @@ export default class Abstraction extends Visualizer {
       }
     }
 
-    for (let i = 0; i < cluster.length; i++){
+    for (let i = 0; i < cluster.length; i++) {
       let tag = '';
-      if (i < numAbstractEntities){
+      if (i < numAbstractEntities) {
         tag = "AE " + (i + 1);
       } else {
         tag = "AR" + ((i - numAbstractEntities) + 1);
       }
 
-      if (cluster[i].length > 0){
+      if (cluster[i].length > 0) {
         let newTable = {
           name: tag,
           key: tag,
           properties: []
         };
-        for(let j = 0; j < cluster[i].length; j++){
+        for (let j = 0; j < cluster[i].length; j++) {
           newTable.properties.push({
             name: cluster[i][j].name,
           });
         }
 
-        if (i < numAbstractEntities){
+        if (i < numAbstractEntities) {
           abstractEntities[tag] = newTable;
         } else {
           let ar = this.state.abstractRelationships;
@@ -279,9 +322,9 @@ export default class Abstraction extends Visualizer {
       }
     }
 
-    for (let i = 0; i < numAbstractEntities; i++){
-      for (let j = 0; j < argument[i].length; j++){
-        if(argument[i][j]){
+    for (let i = 0; i < numAbstractEntities; i++) {
+      for (let j = 0; j < argument[i].length; j++) {
+        if (argument[i][j]) {
           links.push({
             from: "AE " + (j + 1),
             to: "AR " + (i + 1),
