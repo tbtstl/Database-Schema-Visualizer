@@ -74,9 +74,14 @@ export default class Abstraction extends Visualizer {
 
       data.push(node);
     });
-
     return data;
   }
+
+  getCanvasLinkData() {
+    let links = this.state.schema.links;
+    return links;
+  }
+
   getAbstraction(schema) {
     let abstractRelationships = {};
     let abstractEntities = {};
@@ -296,7 +301,7 @@ export default class Abstraction extends Visualizer {
     for (let i = 0; i < cluster.length; i++) {
       let tag = '';
       if (i < numAbstractEntities) {
-        tag = "AE " + (i + 1);
+        tag = "AE" + (i + 1);
       } else {
         tag = "AR" + ((i - numAbstractEntities) + 1);
       }
@@ -326,8 +331,8 @@ export default class Abstraction extends Visualizer {
       for (let j = 0; j < argument[i].length; j++) {
         if (argument[i][j]) {
           links.push({
-            from: "AE " + (j + 1),
-            to: "AR " + (i + 1),
+            from: "AE" + (j + 1),
+            to: "AR" + (i + 1),
             relationship: "generalization"
           });
         }
