@@ -203,6 +203,9 @@ export default class Visualizer extends Component {
     const persistPopoverContent = (
       <PersistPopoverContent nameSubmitCallback={this.formatNewLayout} layouts={this.state.layouts}/>
     );
+
+    const tableList = this.state.abstraction ? (<div></div>) : <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>;
+
     return (
       <div>
         <nav className="pt-navbar">
@@ -226,7 +229,7 @@ export default class Visualizer extends Component {
             </Popover>
           </div>
         </nav>
-        <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
+        {tableList}
         <div className="pt-card pt-elevation-1 canvas-container">
           <Canvas tables={tables} links={links} imageRequested={imageRequested} layout={layout}
                   showAttributes={showAttributes}/>
