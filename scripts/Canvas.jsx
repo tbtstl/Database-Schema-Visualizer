@@ -97,7 +97,7 @@ export default class Canvas extends Component {
       );
 
 
-    this.diagram.nodeTemplate = $(go.Node, "Auto",  // the whole node panel
+    let defaultTemplate = $(go.Node, "Auto",  // the whole node panel
       {
         selectionAdorned: true,
         resizable: true,
@@ -140,6 +140,56 @@ export default class Canvas extends Component {
           new go.Binding("itemArray", "items"))
       )  // end Table Panel
     );  // end Node
+
+    let relationshipTemplate = $(go.Node, "Auto",  // the whole node panel
+      {
+        selectionAdorned: true,
+        resizable: true,
+        layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides,
+        isShadowed: true,
+        shadowColor: "#C5C1AA"
+      },
+      new go.Binding("location", "location").makeTwoWay(),
+      // define the node's outer shape, which will surround the Table
+      $(go.Shape, "Diamond",
+        {fill: lightgrad, stroke: "#756875", strokeWidth: 3}),
+      $(go.Panel, "Table",
+        {margin: 8, stretch: go.GraphObject.Fill},
+        $(go.RowColumnDefinition, {row: 0, sizing: go.RowColumnDefinition.None}),
+        // the table header
+        $(go.TextBlock,
+          {
+            row: 0, alignment: go.Spot.Center,
+            margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
+            font: "bold 16px sans-serif"
+          },
+          new go.Binding("text", "key")),
+        // the collapse/expand button
+        $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
+          {row: 0, alignment: go.Spot.TopRight}),
+        // the list of Panels, each showing an attribute
+        $(go.Panel, "Vertical",
+          {
+            visible: this.state.showAttributes,
+            name: "LIST",
+            row: 1,
+            padding: 3,
+            alignment: go.Spot.TopLeft,
+            defaultAlignment: go.Spot.Left,
+            stretch: go.GraphObject.Horizontal,
+            itemTemplate: template
+          },
+          new go.Binding("itemArray", "items"))
+      )  // end Table Panel
+    );  // end Node
+
+    let templateMap = new go.Map("string", go.Node);
+    templateMap.add("", defaultTemplate);
+    templateMap.add("entity", defaultTemplate);
+    templateMap.add("relationship", relationshipTemplate);
+    this.diagram.nodeTemplateMap = templateMap;
 
 
     this.diagram.linkTemplate = $(go.Link, "Link", // the whole link panel
