@@ -12,13 +12,12 @@ export default class Canvas extends Component {
       links: props.links,
       tables: props.tables,
       layout: props.layout,
-      showAttributes: props.showAttributes
+      showAttributes: props.showAttributes,
+      onDoubleClick: props.onObjectDoubleClicked
     };
     this.diagram = null;
     this.renderDiagram.bind(this);
     this.destroyDiagram.bind(this);
-    this.getTableDataArray.bind(this);
-    this.getLinkDataArray.bind(this);
     this.getImageFromCanvas.bind(this);
     this.handleLayoutChange.bind(this);
   }
@@ -34,9 +33,9 @@ export default class Canvas extends Component {
     Validate the nextProps. If the props require a rerender, set the state and implicitly do so.
     If the nextProps are requesting an image, get the image from the canvas.
      */
-    if(nextProps.schema !== this.state.schema || nextProps.links !== this.state.links || nextProps.layout !== this.state.layout || nextProps.showAttributes !== this.state.showAttributes){
+    if(nextProps.tables !== this.state.tables || nextProps.links !== this.state.links || nextProps.layout !== this.state.layout || nextProps.showAttributes !== this.state.showAttributes){
       this.setState({
-        schema: nextProps.schema,
+        tables: nextProps.tables,
         links: nextProps.links,
         layout: nextProps.layout,
         showAttributes: nextProps.showAttributes
@@ -241,60 +240,15 @@ export default class Canvas extends Component {
 
     this.diagram.addDiagramListener("SelectionMoved", (e) => {
       this.handleLayoutChange();
-    })
+    });
+
+    this.diagram.addDiagramListener("ObjectDoubleClicked", (e)=>{
+      this.state.onDoubleClick(e);
+    });
   }
 
   destroyDiagram() {
     this.diagram.div = null;
-  }
-
-  getTableDataArray() {
-    /*
-    Manipulate the state's schema in order to create an array of tables as goJS nodes. Return an array of nodes.
-     */
-    let data = [];
-    const schema = this.state.schema;
-    Object.keys(schema).forEach((key) => {
-      let node = {};
-      node.key = key;
-      node.items = [];
-
-      // Format the table columns
-      for (let i = 0; i < schema[key].length; i++){
-        let column = {};
-        column.name = schema[key][i].name;
-        column.iskey = schema[key][i].key !== "";
-        column.figure = schema[key][i].key === "" ? "LineH" : schema[key][i].key === "PRI" ? "Diamond" : "TriangleUp";
-        node.items.push(column);
-      }
-
-      data.push(node);
-    });
-
-    return data;
-  }
-
-  getLinkDataArray() {
-    /*
-    Manipulate the state's links in order to create an array of relationships as goJS links. Return an array of links.
-     */
-    let data = [];
-    const links = this.state.links;
-    Object.keys(links).forEach((key)=>{
-      if (!this.state.schema[key]) return;
-
-      // Format the links
-      for(let i = 0; i < links[key].length; i++){
-        let table = links[key];
-        let link = {};
-        link.from = table[i].table_name;
-        link.to = table[i].referenced_table_name;
-        link.text = "0..N";
-        link.toText = "1";
-        data.push(link)
-      }
-    });
-    return data;
   }
 
   getImageFromCanvas(){

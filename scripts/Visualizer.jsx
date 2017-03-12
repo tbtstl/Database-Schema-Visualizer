@@ -149,6 +149,10 @@ export default class Visualizer extends Component {
     return data;
   }
 
+  onObjectDoubleClicked(e){
+    // console.log(e.subject);
+  }
+
   render() {
     /*
      If the schema has been loaded from the database, render the visualizer. Else, render a loading screen.
@@ -232,7 +236,7 @@ export default class Visualizer extends Component {
         {tableList}
         <div className="pt-card pt-elevation-1 canvas-container">
           <Canvas tables={tables} links={links} imageRequested={imageRequested} layout={layout}
-                  showAttributes={showAttributes}/>
+                  showAttributes={showAttributes} onObjectDoubleClicked={this.onObjectDoubleClicked}/>
         </div>
       </div>
     );
