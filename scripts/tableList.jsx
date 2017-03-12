@@ -21,9 +21,9 @@ export default class TableList extends Component {
      */
     let schema = JSON.parse(JSON.stringify(this.state.schema));
     if(isVisible){
-      schema[table.name] = table.columns;
+      schema[table.key] = table.columns;
     } else {
-      delete schema[table.name];
+      delete schema[table.key];
     }
     this.setState({schema: schema});
     this.triggerSchemaChange(schema);
