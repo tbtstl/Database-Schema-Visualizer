@@ -9,9 +9,7 @@ import Visualizer from './Visualizer.jsx';
 export default class Abstraction extends Visualizer {
   constructor(props){
     super(props);
-    this.state.abstractEntities = {};
-    this.state.abstractRelationships = {};
-    this.state.abstractLinks = [];
+    this.state.abstraction = true;
   }
 
   componentDidMount() {
@@ -27,7 +25,7 @@ export default class Abstraction extends Visualizer {
           this.setState({error: resp.error, loading: false});
         } else {
           let abstraction = this.getAbstraction(resp.schema);
-          this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links, loading: false});
+          this.setState({schema: abstraction.abstractEntities, tables: this.getTables(abstraction.abstractEntities), links: abstraction.links, loading: false});
         }
       })
       .catch((e) => {
@@ -37,7 +35,10 @@ export default class Abstraction extends Visualizer {
   }
 
   getAbstraction(schema) {
-    // format schema to usable object
+    let abstractRelationships = {};
+    let abstractEntities = {};
+    let links = [];
+
     const getPKs = (tableCols) => {
       let pks = [];
 
@@ -260,22 +261,20 @@ export default class Abstraction extends Visualizer {
       if (cluster[i].length > 0){
         let newTable = {
           name: tag,
+          key: tag,
           properties: []
         };
         for(let j = 0; j < cluster[i].length; j++){
           newTable.properties.push({
-            name: cluster[i][j].name
+            name: cluster[i][j].name,
           });
         }
 
         if (i < numAbstractEntities){
-          let ae = this.state.abstractEntities;
-          ae[tag] = newTable;
-          this.setState({abstractEntities: ae});
+          abstractEntities[tag] = newTable;
         } else {
           let ar = this.state.abstractRelationships;
-          ar[tag] = newTable;
-          this.setState({abstractRelationships: ar});
+          abstractRelationships[tag] = newTable;
         }
       }
     }
@@ -283,16 +282,15 @@ export default class Abstraction extends Visualizer {
     for (let i = 0; i < numAbstractEntities; i++){
       for (let j = 0; j < argument[i].length; j++){
         if(argument[i][j]){
-          let links = this.state.abstractLinks;
           links.push({
             from: "AE " + (j + 1),
             to: "AR " + (i + 1),
             relationship: "generalization"
           });
-          this.setState({abstractLinks: links});
         }
       }
     }
+    return {abstractRelationships: abstractRelationships, abstractEntities: abstractEntities, links: links};
   }
 
 };

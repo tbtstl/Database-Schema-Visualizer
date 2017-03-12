@@ -57,7 +57,7 @@ export default class Visualizer extends Component {
         }
       })
       .catch((e) => {
-      console.log(e);
+        console.log(e);
         this.setState({error: 'An Unknown error has occured.', loading: false});
       });
   }
@@ -100,13 +100,62 @@ export default class Visualizer extends Component {
     this.setState({layouts: layouts, layout: newLayout});
   };
 
+  getCanvasLinkData() {
+    /*
+     Manipulate the links in order to create an array of relationships as goJS links. Return an array of links.
+     */
+    let data = [];
+    const links = this.state.links;
+    Object.keys(links).forEach((key) => {
+      if (!this.state.schema[key]) return;
+
+      // Format the links
+      for (let i = 0; i < links[key].length; i++) {
+        let table = links[key];
+        let link = {};
+        link.from = table[i].table_name;
+        link.to = table[i].referenced_table_name;
+        link.text = "0..N";
+        link.toText = "1";
+        data.push(link)
+      }
+    });
+    return data;
+  }
+
+  getCanvasTableData() {
+    /*
+     Manipulate the schema in order to create an array of tables as goJS nodes. Return an array of nodes.
+     */
+    let data = [];
+    const schema = this.state.schema;
+    Object.keys(schema).forEach((key) => {
+      let node = {};
+      node.key = key;
+      node.items = [];
+
+      // Format the table columns
+      for (let i = 0; i < schema[key].length; i++) {
+        let column = {};
+        column.name = schema[key][i].name;
+        column.iskey = schema[key][i].key !== "";
+        column.figure = schema[key][i].key === "" ? "LineH" : schema[key][i].key === "PRI" ? "Diamond" : "TriangleUp";
+        node.items.push(column);
+      }
+
+      data.push(node);
+    });
+
+    return data;
+  }
+
   render() {
     /*
      If the schema has been loaded from the database, render the visualizer. Else, render a loading screen.
      */
     let schema = this.state.schema;
-    let tables = this.state.tables;
-    let links = this.state.links;
+    let tables = this.getCanvasTableData();
+    let links = this.getCanvasLinkData();
     let layout = this.state.layout;
     let imageRequested = this.state.imageRequested;
     let showAttributes = this.state.showAttributes;
@@ -179,7 +228,7 @@ export default class Visualizer extends Component {
         </nav>
         <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>
         <div className="pt-card pt-elevation-1 canvas-container">
-          <Canvas schema={schema} links={links} imageRequested={imageRequested} layout={layout}
+          <Canvas tables={tables} links={links} imageRequested={imageRequested} layout={layout}
                   showAttributes={showAttributes}/>
         </div>
       </div>

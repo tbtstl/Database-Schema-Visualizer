@@ -10,6 +10,7 @@ export default class Canvas extends Component {
     this.state = {
       schema: props.schema,
       links: props.links,
+      tables: props.tables,
       layout: props.layout,
       showAttributes: props.showAttributes
     };
@@ -174,8 +175,8 @@ export default class Canvas extends Component {
         new go.Binding("text", "toText"))
     );
 
-    let data = this.getTableDataArray();
-    let links = this.getLinkDataArray();
+    let data = this.state.tables;
+    let links = this.state.links;
     if(this.state.layout.isDefault || !this.diagram.model){
       this.diagram.model = new go.GraphLinksModel(data, links);
     } else {
