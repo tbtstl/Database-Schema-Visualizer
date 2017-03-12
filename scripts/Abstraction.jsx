@@ -10,36 +10,45 @@ export default class Abstraction extends Visualizer {
   constructor(props) {
     super(props);
     this.state.abstraction = true;
+    this.onObjectDoubleClicked = this.onObjectDoubleClicked.bind(this)
   }
 
   componentDidMount() {
     /*
      As soon as the component is mounted, request the schema from the server. If an error occurs, render an alert.
      */
-    fetch('http://localhost:5001/schema')
-      .then((resp) => {
-        return resp.json();
-      })
-      .then((resp) => {
-        if (resp.error) {
-          this.setState({error: resp.error, loading: false});
-        } else {
-          let abstraction = this.getAbstraction(resp.schema);
-          this.setState({
-            schema: abstraction,
-            tables: this.getTables(abstraction.abstractEntities),
-            links: abstraction.links,
-            loading: false
-          });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        this.setState({error: 'An Unknown error has occured.', loading: false});
-      });
+    if(!this.state.abstraction){
+      return;
+    } else {
+      fetch('http://localhost:5001/schema')
+        .then((resp) => {
+          return resp.json();
+        })
+        .then((resp) => {
+          if (resp.error) {
+            this.setState({error: resp.error, loading: false});
+          } else {
+            let abstraction = this.getAbstraction(resp.schema);
+            this.setState({
+              serverResponse: resp,
+              schema: abstraction,
+              links: abstraction.links,
+              loading: false
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          this.setState({error: 'An Unknown error has occured.', loading: false});
+        });
+    }
   }
 
   getCanvasTableData() {
+    if(!this.state.abstraction){
+      let data = super.getCanvasTableData();
+      return data;
+    }
     let data = [];
     let entities = this.state.schema.abstractEntities;
     let relationships = this.state.schema.abstractRelationships;
@@ -78,8 +87,41 @@ export default class Abstraction extends Visualizer {
   }
 
   getCanvasLinkData() {
-    let links = this.state.schema.links;
+    let links = this.state.links;
+    if(!this.state.abstraction){
+      links = super.getCanvasLinkData();
+    }
     return links;
+  }
+
+  onObjectDoubleClicked(e) {
+    let newSchema = {};
+    const getTablesFromEntity = (name)=>{
+      let tablesInEntity = [];
+      let entities = this.state.schema.abstractEntities;
+      let relationships = this.state.schema.abstractRelationships;
+      if (entities.hasOwnProperty(name)){
+        for(let i = 0; i < entities[name].properties.length; i++){
+          tablesInEntity.push(entities[name].properties[i].name);
+        }
+      } else if (name in relationships){
+        for(let i = 0; i < relationships[name].properties.length; i++){
+          tablesInEntity.push(relationships[name].properties[i].name);
+        }
+      }
+      return tablesInEntity;
+    };
+
+    let entityName = e.subject.me;
+    let tablesInEntity = getTablesFromEntity(entityName);
+    Object.keys(this.state.serverResponse.schema).forEach((x)=>{
+      if (tablesInEntity.indexOf(x) !== -1){
+        newSchema[x] = this.state.serverResponse.schema[x];
+      }
+    });
+
+
+    this.setState({abstraction: false, schema: newSchema});
   }
 
   getAbstraction(schema) {
