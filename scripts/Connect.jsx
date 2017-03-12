@@ -16,7 +16,7 @@ export default class App extends Component {
       dbName: '',
       username: '',
       password: '',
-      abstractionMode: false,
+      abstractionMode: true,
       calloutClassName: '',
       calloutText: '',
       projects: {},
@@ -66,6 +66,8 @@ export default class App extends Component {
       abstractionMode: this.state.abstractionMode
     };
 
+    console.log(form);
+
     if(this.state.projectName.length > 0){
       let projects = this.state.projects;
       Object.assign(projects, {[this.state.projectName]: form});
@@ -94,7 +96,7 @@ export default class App extends Component {
           this.setState({calloutText: 'Could not connect: ' + resp.error});
         } else {
           this.setState({calloutText: 'Successfully Connected to ' + this.state.host});
-          if (this.state.abstractionMode) hashHistory.push('/abstraction');
+          if (this.state.abstractionMode === true) hashHistory.push('/abstraction');
           else hashHistory.push('/visualizer');
         }
       })
@@ -201,7 +203,7 @@ export default class App extends Component {
             </label>
             <hr/>
             <label style={abstractionSwitchStyle} className="pt-control pt-switch pt-large">
-              <input type="checkbox" value={this.state.abstractionMode} name="abstractionMode" onChange={this.handleChange}/>
+              <input type="checkbox" value={this.state.abstractionMode} name="abstractionMode" onChange={this.handleChange} checked={this.state.abstractionMode}/>
               <span className="pt-control-indicator"></span> 🎉 Abstraction Mode 🎉
             </label>
             <button className="pt-button pt-intent-primary pt-fill" type="submit">Connect</button>
