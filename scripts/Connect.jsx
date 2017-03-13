@@ -66,8 +66,6 @@ export default class App extends Component {
       abstractionMode: this.state.abstractionMode
     };
 
-    console.log(form);
-
     if(this.state.projectName.length > 0){
       let projects = this.state.projects;
       Object.assign(projects, {[this.state.projectName]: form});

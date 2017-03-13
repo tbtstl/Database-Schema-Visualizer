@@ -100,11 +100,13 @@ export default class Abstraction extends Visualizer {
       let tablesInEntity = [];
       let entities = this.state.schema.abstractEntities;
       let relationships = this.state.schema.abstractRelationships;
-      if (entities.hasOwnProperty(name)){
+
+
+      if (entities && entities.hasOwnProperty(name)){
         for(let i = 0; i < entities[name].properties.length; i++){
           tablesInEntity.push(entities[name].properties[i].name);
         }
-      } else if (name in relationships){
+      } else if (relationships && name in relationships){
         for(let i = 0; i < relationships[name].properties.length; i++){
           tablesInEntity.push(relationships[name].properties[i].name);
         }
