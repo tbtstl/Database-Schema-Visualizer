@@ -118,7 +118,8 @@ export default class Canvas extends Component {
           {
             row: 0, alignment: go.Spot.Center,
             margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
-            font: "bold 16px sans-serif"
+            font: "bold 16px sans-serif",
+            editable: true
           },
           new go.Binding("text", "key")),
         // the collapse/expand button
@@ -162,7 +163,8 @@ export default class Canvas extends Component {
           {
             row: 0, alignment: go.Spot.Center,
             margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
-            font: "bold 16px sans-serif"
+            font: "bold 16px sans-serif",
+            editable: true
           },
           new go.Binding("text", "key")),
         // the collapse/expand button
@@ -226,13 +228,15 @@ export default class Canvas extends Component {
 
     let data = this.state.tables;
     let links = this.state.links;
-    if(this.state.layout.isDefault || !this.diagram.model){
+    if(this.state.layout.isDefault || !this.state.layout.model){
       this.diagram.model = new go.GraphLinksModel(data, links);
     } else {
       try{
         this.diagram.model = go.Model.fromJson(this.state.layout.model);
+        console.log(this.state.layout);
       }
       catch (e){
+        console.log(e);
         this.diagram.model = new go.GraphLinksModel(data, links);
       }
 
@@ -240,6 +244,13 @@ export default class Canvas extends Component {
 
     this.diagram.addDiagramListener("SelectionMoved", (e) => {
       this.handleLayoutChange();
+    });
+    this.diagram.addDiagramListener("TextEdited", (e) => {
+      let editedText = this.handleTextChange(e);
+      this.handleLayoutChange(editedText);
+    });
+    this.diagram.addDiagramListener("ObjectSingleClicked", (e)=>{
+      localStorage.setItem('lastTouched', e.subject.me);
     });
 
     this.diagram.addDiagramListener("ObjectDoubleClicked", (e)=>{
@@ -261,8 +272,40 @@ export default class Canvas extends Component {
     window.open(url);
   }
 
-  handleLayoutChange(){
+  handleTextChange(e){
+    return e.subject.me;
+  }
+
+  handleLayoutChange(editedText=''){
     let currentLayout = this.diagram.model.toJson();
+    currentLayout = JSON.parse(currentLayout);
+
+    if (editedText.length > 0 && currentLayout && currentLayout.nodeDataArray){
+      // If edited text is present, update the schema's keys
+      let nodes = currentLayout.nodeDataArray;
+      let lastTouched = localStorage.getItem('lastTouched') || '';
+
+      nodes.forEach((x)=>{
+        if (x.key === lastTouched){
+          x.key = editedText;
+        }
+      });
+    }
+
+    if(editedText.length > 0 && currentLayout && currentLayout.linkDataArray){
+      let links = currentLayout.linkDataArray;
+      let lastTouched = localStorage.getItem('lastTouched') || '';
+
+      links.forEach((x)=>{
+        if(x.from === lastTouched){
+          x.from = editedText;
+        }
+        if (x.to === lastTouched){
+          x.to = editedText;
+        }
+      });
+    }
+
     localStorage.setItem('currentLayout', JSON.stringify(currentLayout));
   }
 

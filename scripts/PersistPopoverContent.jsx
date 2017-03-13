@@ -17,7 +17,6 @@ export default class Canvas extends Component {
     event.preventDefault();
     let name = this.state.layoutName;
     let currentLayout = JSON.parse(localStorage.getItem('currentLayout') || '{}');
-    console.log(currentLayout);
 
     if (name.length > 0 && currentLayout) {
       let newLayout = {};
