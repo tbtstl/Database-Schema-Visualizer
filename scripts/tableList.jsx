@@ -21,9 +21,9 @@ export default class TableList extends Component {
      */
     let schema = JSON.parse(JSON.stringify(this.state.schema));
     if(isVisible){
-      schema[table.name] = table.columns;
+      schema[table.key] = table.columns;
     } else {
-      delete schema[table.name];
+      delete schema[table.key];
     }
     this.setState({schema: schema});
     this.triggerSchemaChange(schema);
@@ -35,7 +35,7 @@ export default class TableList extends Component {
       <div className="tableList pt-card pt-elevation-3">
         <div className="pt-card pt-elevation-0"><h5 className="center-horizontal">Table List</h5></div>
         {
-          tables.map((table, index) => <TableListItem table={table} key={table.name}
+          tables.map((table, index) => <TableListItem table={table} key={table.key}
                                                       onToggleVisibility={this.onToggleVisibility}/>)
         }
       </div>

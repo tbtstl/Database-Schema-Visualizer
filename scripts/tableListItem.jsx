@@ -28,7 +28,7 @@ export default class TableListItem extends Component {
           <label className="pt-control pt-checkbox .pt-large">
             <input type="checkbox" onChange={(e)=>{this.toggleVisibility(e)}} checked={this.state.visible}/>
           <span className="pt-control-indicator"></span>
-          {this.state.table.name}
+          {this.state.table.key}
         </label>
       </div>
   </div>

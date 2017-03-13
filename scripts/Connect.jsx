@@ -16,6 +16,7 @@ export default class App extends Component {
       dbName: '',
       username: '',
       password: '',
+      abstractionMode: true,
       calloutClassName: '',
       calloutText: '',
       projects: {},
@@ -61,7 +62,8 @@ export default class App extends Component {
       port: this.state.port,
       dbName: this.state.dbName,
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
+      abstractionMode: this.state.abstractionMode
     };
 
     if(this.state.projectName.length > 0){
@@ -92,7 +94,8 @@ export default class App extends Component {
           this.setState({calloutText: 'Could not connect: ' + resp.error});
         } else {
           this.setState({calloutText: 'Successfully Connected to ' + this.state.host});
-          hashHistory.push('/visualizer');
+          if (this.state.abstractionMode === true) hashHistory.push('/abstraction');
+          else hashHistory.push('/visualizer');
         }
       })
       .catch((e) => {
@@ -142,6 +145,8 @@ export default class App extends Component {
 
 
   render(){
+    const abstractionSwitchStyle = {marginTop: '2em', marginBottom: '2em'};
+
     /*
     Render the connect form, hiding the project selection if no projects exist.
      */
@@ -193,6 +198,11 @@ export default class App extends Component {
               Password
               <input name="password" value={this.state.password} type="password" className="pt-input"
                      onChange={this.handleChange}/>
+            </label>
+            <hr/>
+            <label style={abstractionSwitchStyle} className="pt-control pt-switch pt-large">
+              <input type="checkbox" value={this.state.abstractionMode} name="abstractionMode" onChange={this.handleChange} checked={this.state.abstractionMode}/>
+              <span className="pt-control-indicator"></span> 🎉 Abstraction Mode 🎉
             </label>
             <button className="pt-button pt-intent-primary pt-fill" type="submit">Connect</button>
           </form>

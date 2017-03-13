@@ -36,11 +36,28 @@ export default class Content extends Component {
           <li>Change the layout of the diagram by clicking the layout button on the navigation bar</li>
           <li>Remove a table from the diagram by unselecting it from the table list</li>
           <li>Export an image of the diagram by clicking the export image button on the navigation bar</li>
+          <li>Nodes can be renamed by clicking on the label of the node</li>
         </ol>
         <h5>Notes</h5>
         <ol>
           <li>The larger the database, the longer it will take to render changes to the diagram such as toggling attributes and changing layouts. Be patient when using these features.</li>
         </ol>
+
+        <hr/>
+
+        <div className="pt-callout pt-intent-primary"><h5>New in Release 2.0</h5>
+        <h3>Abstraction Mode</h3>
+        <ul>
+          <li>When connecting to a database, enable the abstraction mode to view a summarized abstracted ER view of the database.</li>
+          <li>Abstract relationships and nodes can be "drilled into" by double clicking on the node</li>
+        </ul>
+          <hr/>
+          <ul>
+            <li>Nodes can be renamed by clicking on the label of the node</li>
+            <li>Custom layouts can be persisted by clicking on the persist layout button in the navigation bar</li>
+            <li>Reset a diagram to it's initial state by clicking the reset button on the navigation bar</li>
+          </ul>
+        </div>
       </div>
     );
   }
