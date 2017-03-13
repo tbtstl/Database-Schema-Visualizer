@@ -101,12 +101,11 @@ export default class Abstraction extends Visualizer {
       let entities = this.state.schema.abstractEntities;
       let relationships = this.state.schema.abstractRelationships;
 
-
       if (entities && entities.hasOwnProperty(name)){
         for(let i = 0; i < entities[name].properties.length; i++){
           tablesInEntity.push(entities[name].properties[i].name);
         }
-      } else if (relationships && name in relationships){
+      } else if (relationships && relationships.hasOwnProperty(name)){
         for(let i = 0; i < relationships[name].properties.length; i++){
           tablesInEntity.push(relationships[name].properties[i].name);
         }
@@ -115,6 +114,11 @@ export default class Abstraction extends Visualizer {
     };
 
     let entityName = e.subject.me;
+    if (!entityName){
+      // For some reason, entity name isn't always available on the diagram event. If this is the case, use the last
+      // touched node
+      entityName = localStorage.getItem('lastTouched');
+    }
     let tablesInEntity = getTablesFromEntity(entityName);
     Object.keys(this.state.serverResponse.schema).forEach((x)=>{
       if (tablesInEntity.indexOf(x) !== -1){
