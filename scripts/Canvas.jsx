@@ -118,7 +118,8 @@ export default class Canvas extends Component {
           {
             row: 0, alignment: go.Spot.Center,
             margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
-            font: "bold 16px sans-serif"
+            font: "bold 16px sans-serif",
+            editable: true
           },
           new go.Binding("text", "key")),
         // the collapse/expand button
@@ -162,7 +163,8 @@ export default class Canvas extends Component {
           {
             row: 0, alignment: go.Spot.Center,
             margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
-            font: "bold 16px sans-serif"
+            font: "bold 16px sans-serif",
+            editable: true
           },
           new go.Binding("text", "key")),
         // the collapse/expand button
