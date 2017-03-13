@@ -231,6 +231,7 @@ export default class Visualizer extends Component {
             <Popover content={layoutMenu} position={Position.BOTTOM} isModal="true">
               <button className="pt-button pt-minimal pt-icon-style">Layout</button>
             </Popover>
+            <button className="pt-button pt-minimal pt-icon-refresh" onClick={()=>{window.location.reload(true)}}>Reload</button>
           </div>
         </nav>
         {tableList}
