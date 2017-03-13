@@ -107,7 +107,7 @@ def OrderAscPk(schema):
   @peram tables: a set of tables to be ordered
   @return An ordered dict
   """
-  return OrderedDict(sorted(schema.items(), key=lambda tableTup: (list(map(itemgetter('key'), tableTup[1])).count('PRI'), hash(tuple(map(itemgetter('name'), pk(tableTup[1])))))))
+  return OrderedDict(sorted(schema.items(), key=lambda tableTup: (list(map(itemgetter('key'), tableTup[1])).count('PRI'), sorted(tuple(map(itemgetter('name'), pk(tableTup[1])))))))
 
 
 def pk(table):
