@@ -20,7 +20,8 @@ export default class App extends Component {
       calloutClassName: '',
       calloutText: '',
       projects: {},
-      hideProjects: true
+      hideProjects: true,
+      filenames: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -45,9 +46,20 @@ export default class App extends Component {
     Helper function to synchronize form values to state variables
      */
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-    this.setState({[name]: value});
+    const value = target.type === 'checkbox' ? target.checked : target.type === 'file' ? target.files : target.value;
+
+    if (target.type === 'file'){
+      let filenames = [];
+      for(let i = 0; i < value.length; i++){
+        let file = value[i];
+        filenames.push(file.name);
+      }
+      this.setState({filenames: filenames.join(', ')});
+    }else{
+      const name = target.name;
+      this.setState({[name]: value});
+    }
+
   }
 
   handleSubmit(event) {
@@ -57,15 +69,10 @@ export default class App extends Component {
       Else, display any errors.
      */
     event.preventDefault();
-    let form = {
-      host: this.state.host,
-      port: this.state.port,
-      dbName: this.state.dbName,
-      username: this.state.username,
-      password: this.state.password,
-      abstractionMode: this.state.abstractionMode
-    };
+    let form = event.target;
+    let formData = new FormData(form);
 
+    // formData.append('javaSourceFiles', this.state.javaSourceFiles.)
     if(this.state.projectName.length > 0){
       let projects = this.state.projects;
       Object.assign(projects, {[this.state.projectName]: form});
@@ -76,10 +83,7 @@ export default class App extends Component {
 
     fetch('http://localhost:5001/connect', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(form)
+      body: formData
     })
       .then((resp) => {
         if (resp.status !== 200) {
@@ -147,9 +151,6 @@ export default class App extends Component {
   render(){
     const abstractionSwitchStyle = {marginTop: '2em', marginBottom: '2em'};
 
-    /*
-    Render the connect form, hiding the project selection if no projects exist.
-     */
     return (
       <div>
         <nav className="pt-navbar .modifier .pt-fixed-top">
@@ -168,7 +169,7 @@ export default class App extends Component {
             </div>
           </div>
           <hr />
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit} encType="multipart/form-data">
             <h5>Create a new project</h5>
             <div className={this.state.calloutClassName}>{this.state.calloutText}</div>
             <br/>
@@ -200,6 +201,17 @@ export default class App extends Component {
                      onChange={this.handleChange}/>
             </label>
             <hr/>
+            <div className="pt-form-group pt-inline">
+              <label className="pt-file-upload pt-fill">
+                <input name="javaSourceFiles[]" type="file" multiple="true"
+                       onChange={this.handleChange}/>
+                <span className="pt-file-upload-input">Java Files (Optional)</span>
+              </label>
+              <div className="pt-form-helper-text">{this.state.filenames}</div>
+
+            </div>
+
+            <hr/>
             <label style={abstractionSwitchStyle} className="pt-control pt-switch pt-large">
               <input type="checkbox" value={this.state.abstractionMode} name="abstractionMode" onChange={this.handleChange} checked={this.state.abstractionMode}/>
               <span className="pt-control-indicator"></span> 🎉 Abstraction Mode 🎉
@@ -209,5 +221,8 @@ export default class App extends Component {
         </div>
       </div>
     );
+    /*
+    Render the connect form, hiding the project selection if no projects exist.
+     */
   }
 }
