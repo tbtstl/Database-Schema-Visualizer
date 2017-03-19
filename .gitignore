@@ -39,3 +39,7 @@ public/*
 
 *.pyc
 server/__pycache__/
+
+
+server/uploads/*
+!server/uploads/.gitkeep

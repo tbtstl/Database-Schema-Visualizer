@@ -8,6 +8,7 @@ from flask import Response
 from flask import make_response, request, current_app
 from functools import update_wrapper
 
+ALLOWED_EXTS = ['java']
 
 # https://blog.skyred.fi/articles/better-crossdomain-snippet-for-flask.html
 def crossdomain(origin=None, methods=None, headers=None,
@@ -116,3 +117,11 @@ def pk(table):
   @peram table: A schema item
   """
   return sorted(list(filter(lambda col: col['key'] == 'PRI', table)),key=lambda col: col['name'])
+
+def allowed_file(filename):
+  """
+  Validate that the uploaded file is a java source file.
+  :param filename: a filename to validate
+  :return: True if the filename ends with .java, False otherwise
+  """
+  return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTS
