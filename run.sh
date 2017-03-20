@@ -14,6 +14,13 @@ then
 fi
 
 
+if [ $(dpkg-query -W -f='${Status}' libmysqlclient-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
+  echo "installing libmysqlclient-dev and mysql-server"
+  apt-get install mysql-server
+  apt-get install libmysqlclient-dev
+fi
+
 echo 'Checking if npm Installed...';
 if [ $(dpkg-query -W -f='${Status}' npm 2>/dev/null | grep -c "ok installed") -eq 0 ]
 then
