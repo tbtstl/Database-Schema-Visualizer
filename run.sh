@@ -10,15 +10,26 @@ if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed"
 then
   echo 'Installing Python3';
   apt-get install python3;
+fi
+
+if [ $(dpkg-query -W -f='${Status}' python3-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
   apt-get install python3-dev;
+fi
+
+if [ $(dpkg-query -W -f='${Status}' python3.4-venv 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
   apt-get install python3.4-venv;
 fi
 
+if [ $(dpkg-query -W -f='${Status}' mysql-server 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
+  echo "mysql-server"
+  apt-get install mysql-server
+fi
 
 if [ $(dpkg-query -W -f='${Status}' libmysqlclient-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]
 then
-  echo "installing libmysqlclient-dev and mysql-server"
-  apt-get install mysql-server
   apt-get install libmysqlclient-dev
 fi
 
