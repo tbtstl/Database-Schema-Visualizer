@@ -51,6 +51,10 @@ python3 server/application.py &
 
 echo "Server started";
 echo "Installing npm packages";
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+source ~/.profile
+nvm install v7.7.3
+nvm use 7.7.3
 npm install
 
 echo "Starting Client App...";
