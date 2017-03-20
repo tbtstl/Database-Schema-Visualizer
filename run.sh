@@ -10,6 +10,7 @@ if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed"
 then
   echo 'Installing Python3';
   apt-get install python3;
+  apt-get install python3-dev;
   apt-get install python3.4-venv;
 fi
 
