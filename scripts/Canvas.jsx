@@ -20,6 +20,7 @@ export default class Canvas extends Component {
     this.destroyDiagram.bind(this);
     this.getImageFromCanvas.bind(this);
     this.handleLayoutChange.bind(this);
+    this.handleTextChange.bind(this);
   }
 
 
@@ -250,12 +251,13 @@ export default class Canvas extends Component {
       this.handleLayoutChange(editedText);
     });
     this.diagram.addDiagramListener("ObjectSingleClicked", (e)=>{
-      localStorage.setItem('lastTouched', e.subject.me);
+      localStorage.setItem('lastTouched', e.subject.text);
     });
 
     this.diagram.addDiagramListener("ObjectDoubleClicked", (e)=>{
       this.state.onDoubleClick(e);
     });
+    localStorage.setItem('currentLayout', JSON.stringify(this.diagram.model.toJson()));
   }
 
   destroyDiagram() {
@@ -273,14 +275,18 @@ export default class Canvas extends Component {
   }
 
   handleTextChange(e){
-    return e.subject.me;
+    return e.subject.text;
   }
 
   handleLayoutChange(editedText=''){
-    let currentLayout = this.diagram.model.toJson();
+    let currentLayout = localStorage.getItem('currentLayout') === 'undefined' ? false : JSON.parse(localStorage.getItem('currentLayout'));
     currentLayout = JSON.parse(currentLayout);
 
-    if (editedText.length > 0 && currentLayout && currentLayout.nodeDataArray){
+    if (!currentLayout){
+      currentLayout = JSON.parse(this.diagram.model.toJson());
+    }
+
+    if (editedText.length > 0 && currentLayout.nodeDataArray.length){
       // If edited text is present, update the schema's keys
       let nodes = currentLayout.nodeDataArray;
       let lastTouched = localStorage.getItem('lastTouched') || '';
@@ -292,7 +298,7 @@ export default class Canvas extends Component {
       });
     }
 
-    if(editedText.length > 0 && currentLayout && currentLayout.linkDataArray){
+    if(editedText.length > 0 && currentLayout.linkDataArray.length){
       let links = currentLayout.linkDataArray;
       let lastTouched = localStorage.getItem('lastTouched') || '';
 
