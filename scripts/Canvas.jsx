@@ -234,7 +234,6 @@ export default class Canvas extends Component {
     } else {
       try{
         this.diagram.model = go.Model.fromJson(this.state.layout.model);
-        console.log(this.state.layout);
       }
       catch (e){
         console.log(e);
@@ -251,13 +250,16 @@ export default class Canvas extends Component {
       this.handleLayoutChange(editedText);
     });
     this.diagram.addDiagramListener("ObjectSingleClicked", (e)=>{
-      localStorage.setItem('lastTouched', e.subject.text);
+      console.log(e.subject.text);
+      if(e.subject.text){
+        localStorage.setItem('lastTouched', e.subject.text);
+      }
     });
 
     this.diagram.addDiagramListener("ObjectDoubleClicked", (e)=>{
       this.state.onDoubleClick(e);
     });
-    localStorage.setItem('currentLayout', JSON.stringify(this.diagram.model.toJson()));
+    localStorage.setItem('currentModel', this.diagram.model.toJson());
   }
 
   destroyDiagram() {
@@ -279,16 +281,14 @@ export default class Canvas extends Component {
   }
 
   handleLayoutChange(editedText=''){
-    let currentLayout = localStorage.getItem('currentLayout') === 'undefined' ? false : JSON.parse(localStorage.getItem('currentLayout'));
-    currentLayout = JSON.parse(currentLayout);
+    let currentModel = localStorage.getItem('currentModel') ? localStorage.getItem('currentModel') : this.diagram.model.toJson();
+    console.log(JSON.parse(this.diagram.model.toJson()));
 
-    if (!currentLayout){
-      currentLayout = JSON.parse(this.diagram.model.toJson());
-    }
+    currentModel = JSON.parse(currentModel);
 
-    if (editedText.length > 0 && currentLayout.nodeDataArray.length){
+    if (editedText.length > 0 && currentModel.nodeDataArray.length){
       // If edited text is present, update the schema's keys
-      let nodes = currentLayout.nodeDataArray;
+      let nodes = currentModel.nodeDataArray;
       let lastTouched = localStorage.getItem('lastTouched') || '';
 
       nodes.forEach((x)=>{
@@ -298,8 +298,8 @@ export default class Canvas extends Component {
       });
     }
 
-    if(editedText.length > 0 && currentLayout.linkDataArray.length){
-      let links = currentLayout.linkDataArray;
+    if(editedText.length > 0 && currentModel.linkDataArray.length){
+      let links = currentModel.linkDataArray;
       let lastTouched = localStorage.getItem('lastTouched') || '';
 
       links.forEach((x)=>{
@@ -312,7 +312,8 @@ export default class Canvas extends Component {
       });
     }
 
-    localStorage.setItem('currentLayout', JSON.stringify(currentLayout));
+    localStorage.setItem('currentModel', JSON.stringify(currentModel));
+    console.log(currentModel);
   }
 
   render() {

@@ -16,13 +16,13 @@ export default class Canvas extends Component {
   handleSubmit(event) {
     event.preventDefault();
     let name = this.state.layoutName;
-    let currentLayout = JSON.parse(localStorage.getItem('currentLayout'));
-    if (name.length > 0 && currentLayout) {
+    let currentModel = JSON.parse(localStorage.getItem('currentModel'));
+    if (name.length > 0 && currentModel) {
       let newLayout = {};
       newLayout.isDefault = false;
       newLayout.displayName = name;
       newLayout.layoutKey = name;
-      newLayout.model = currentLayout;
+      newLayout.model = currentModel;
       let layouts = this.state.layouts;
 
       // if layouts have the same name, remove the stale one and update with the new one
