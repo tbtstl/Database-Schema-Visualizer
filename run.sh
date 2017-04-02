@@ -12,6 +12,26 @@ then
   apt-get install python3;
 fi
 
+if [ $(dpkg-query -W -f='${Status}' python3-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
+  apt-get install python3-dev;
+fi
+
+if [ $(dpkg-query -W -f='${Status}' python3.4-venv 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
+  apt-get install python3.4-venv;
+fi
+
+if [ $(dpkg-query -W -f='${Status}' mysql-server 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
+  echo "mysql-server"
+  apt-get install mysql-server
+fi
+
+if [ $(dpkg-query -W -f='${Status}' libmysqlclient-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]
+then
+  apt-get install libmysqlclient-dev
+fi
 
 echo 'Checking if npm Installed...';
 if [ $(dpkg-query -W -f='${Status}' npm 2>/dev/null | grep -c "ok installed") -eq 0 ]
@@ -31,6 +51,10 @@ python3 server/application.py &
 
 echo "Server started";
 echo "Installing npm packages";
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+source ~/.profile
+nvm install v7.7.3
+nvm use 7.7.3
 npm install
 
 echo "Starting Client App...";

@@ -101,6 +101,9 @@ export default class Abstraction extends Visualizer {
       let entities = this.state.schema.abstractEntities;
       let relationships = this.state.schema.abstractRelationships;
 
+      console.log(entities);
+      console.log(name);
+
       if (entities && entities.hasOwnProperty(name)){
         for(let i = 0; i < entities[name].properties.length; i++){
           tablesInEntity.push(entities[name].properties[i].name);
@@ -110,6 +113,7 @@ export default class Abstraction extends Visualizer {
           tablesInEntity.push(relationships[name].properties[i].name);
         }
       }
+      console.log(tablesInEntity);
       return tablesInEntity;
     };
 
@@ -119,6 +123,7 @@ export default class Abstraction extends Visualizer {
       // touched node
       entityName = localStorage.getItem('lastTouched');
     }
+
     let tablesInEntity = getTablesFromEntity(entityName);
     Object.keys(this.state.serverResponse.schema).forEach((x)=>{
       if (tablesInEntity.indexOf(x) !== -1){

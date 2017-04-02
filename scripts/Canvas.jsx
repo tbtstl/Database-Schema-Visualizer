@@ -20,6 +20,7 @@ export default class Canvas extends Component {
     this.destroyDiagram.bind(this);
     this.getImageFromCanvas.bind(this);
     this.handleLayoutChange.bind(this);
+    this.handleTextChange.bind(this);
   }
 
 
@@ -233,7 +234,6 @@ export default class Canvas extends Component {
     } else {
       try{
         this.diagram.model = go.Model.fromJson(this.state.layout.model);
-        console.log(this.state.layout);
       }
       catch (e){
         console.log(e);
@@ -250,12 +250,16 @@ export default class Canvas extends Component {
       this.handleLayoutChange(editedText);
     });
     this.diagram.addDiagramListener("ObjectSingleClicked", (e)=>{
-      localStorage.setItem('lastTouched', e.subject.me);
+      console.log(e.subject.text);
+      if(e.subject.text){
+        localStorage.setItem('lastTouched', e.subject.text);
+      }
     });
 
     this.diagram.addDiagramListener("ObjectDoubleClicked", (e)=>{
       this.state.onDoubleClick(e);
     });
+    localStorage.setItem('currentModel', this.diagram.model.toJson());
   }
 
   destroyDiagram() {
@@ -273,16 +277,18 @@ export default class Canvas extends Component {
   }
 
   handleTextChange(e){
-    return e.subject.me;
+    return e.subject.text;
   }
 
   handleLayoutChange(editedText=''){
-    let currentLayout = this.diagram.model.toJson();
-    currentLayout = JSON.parse(currentLayout);
+    let currentModel = localStorage.getItem('currentModel') ? localStorage.getItem('currentModel') : this.diagram.model.toJson();
+    console.log(JSON.parse(this.diagram.model.toJson()));
 
-    if (editedText.length > 0 && currentLayout && currentLayout.nodeDataArray){
+    currentModel = JSON.parse(currentModel);
+
+    if (editedText.length > 0 && currentModel.nodeDataArray.length){
       // If edited text is present, update the schema's keys
-      let nodes = currentLayout.nodeDataArray;
+      let nodes = currentModel.nodeDataArray;
       let lastTouched = localStorage.getItem('lastTouched') || '';
 
       nodes.forEach((x)=>{
@@ -292,8 +298,8 @@ export default class Canvas extends Component {
       });
     }
 
-    if(editedText.length > 0 && currentLayout && currentLayout.linkDataArray){
-      let links = currentLayout.linkDataArray;
+    if(editedText.length > 0 && currentModel.linkDataArray.length){
+      let links = currentModel.linkDataArray;
       let lastTouched = localStorage.getItem('lastTouched') || '';
 
       links.forEach((x)=>{
@@ -306,7 +312,8 @@ export default class Canvas extends Component {
       });
     }
 
-    localStorage.setItem('currentLayout', JSON.stringify(currentLayout));
+    localStorage.setItem('currentModel', JSON.stringify(currentModel));
+    console.log(currentModel);
   }
 
   render() {
