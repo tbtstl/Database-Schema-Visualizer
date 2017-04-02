@@ -9,7 +9,7 @@ from flask import g
 
 from db import MySQL
 from helpers import crossdomain, error_response, get_columns_for_table, get_links_from_table, OrderAscPk, pk, \
-  allowed_file
+  allowed_file, get_all_links
 from functools import reduce
 
 from werkzeug.utils import secure_filename
@@ -119,6 +119,7 @@ def connect():
 
   except Exception as e:
     return error_response(str(e))
+
 
   return jsonify({'success': True})
 

@@ -102,6 +102,17 @@ def get_links_from_table(conn, table):
 
   return links
 
+def get_all_links(conn):
+  """
+  A helper function that finds every foreign key in a mySQL databse and returns them as a list of link objectrs
+  """
+  cursor = conn.cursor()
+  cursor.execute('show tables')
+  tables = cursor.fetchall()
+  arrayOfLinks = map(lambda tab: get_links_from_table(conn, tab[0]), tables)
+  return [link for arr in arrayOfLinks for link in arr]
+
+
 def OrderAscPk(schema):
   """
   A helper function to return an ordered set of tables. Ordered by cardinality of primary keys.
