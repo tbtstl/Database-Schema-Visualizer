@@ -2,8 +2,10 @@ import json
 import os
 from _mysql import Error
 from collections import OrderedDict
+from pathlib import Path
 
 import flask
+import subprocess
 from flask import Flask, jsonify, request, Response
 from flask import g
 
@@ -56,8 +58,10 @@ def schema():
   Returns a JSON representation of the database schema (and it's FK links) to be used by the client application.
     If any errors occur while querying the database, a 400 response is returned with an explanation of the error.
   """
+  jpa_file_path = "JPAParseOutput.json"
   schema = {}
   links = {}
+  jpa_file = Path(jpa_file_path)
   response = {'schema': schema, 'links': links}
 
   try:
@@ -75,8 +79,16 @@ def schema():
       if link:
         links[table] = get_links_from_table(conn, table)
 
+    subprocess.call(["java", "-jar", "libs/oscar-parser-1.0.jar", "./uploads"])
+
+    if jpa_file.is_file():
+      response['jpa_links'] = json.loads(open(jpa_file_path).read())
+
   except Error as e:
     return error_response(repr(e))
+
+  if jpa_file.is_file():
+    os.unlink(jpa_file_path)
 
   return jsonify(**response)
 
