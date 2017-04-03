@@ -45,7 +45,7 @@ export default class Content extends Component {
 
         <hr/>
 
-        <div className="pt-callout pt-intent-primary"><h5>New in Release 2.0</h5>
+        <div className="pt-callout"><h5>New in Release 2.0</h5>
         <h3>Abstraction Mode</h3>
         <ul>
           <li>When connecting to a database, enable the abstraction mode to view a summarized abstracted ER view of the database.</li>
@@ -58,6 +58,12 @@ export default class Content extends Component {
             <li>Reset a diagram to it's initial state by clicking the reset button on the navigation bar</li>
           </ul>
         </div>
+
+        <div className="pt-callout pt-intent-primary"><h5>New in Release 3.0</h5></div>
+        <h3>JPA Foreign Key candidates</h3>
+        <ul>
+          <li>Upload java files when connecting to a database to have them parsed for extra foreign key candidates. This functionality works for JPA.</li>
+        </ul>
       </div>
     );
   }

@@ -8,6 +8,7 @@ from flask import Response
 from flask import make_response, request, current_app
 from functools import update_wrapper
 
+ALLOWED_EXTS = ['java']
 
 # https://blog.skyred.fi/articles/better-crossdomain-snippet-for-flask.html
 def crossdomain(origin=None, methods=None, headers=None,
@@ -101,6 +102,17 @@ def get_links_from_table(conn, table):
 
   return links
 
+def get_all_links(conn):
+  """
+  A helper function that finds every foreign key in a mySQL databse and returns them as a list of link objectrs
+  """
+  cursor = conn.cursor()
+  cursor.execute('show tables')
+  tables = cursor.fetchall()
+  arrayOfLinks = map(lambda tab: get_links_from_table(conn, tab[0]), tables)
+  return [link for arr in arrayOfLinks for link in arr]
+
+
 def OrderAscPk(schema):
   """
   A helper function to return an ordered set of tables. Ordered by cardinality of primary keys.
@@ -116,3 +128,11 @@ def pk(table):
   @peram table: A schema item
   """
   return sorted(list(filter(lambda col: col['key'] == 'PRI', table)),key=lambda col: col['name'])
+
+def allowed_file(filename):
+  """
+  Validate that the uploaded file is a java source file.
+  :param filename: a filename to validate
+  :return: True if the filename ends with .java, False otherwise
+  """
+  return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTS

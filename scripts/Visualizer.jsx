@@ -27,6 +27,7 @@ export default class Visualizer extends Component {
       tables: [],
       layouts: layouts.length ? layouts : defaultLayouts,
       links: {},
+      jpaLinks: {},
       layout: "forceDirected",
       imageRequested: false,
       showAttributes: false,
@@ -53,7 +54,13 @@ export default class Visualizer extends Component {
         if (resp.error) {
           this.setState({error: resp.error, loading: false});
         } else {
-          this.setState({schema: resp.schema, tables: this.getTables(resp.schema), links: resp.links, loading: false});
+          this.setState({
+            schema: resp.schema,
+            tables: this.getTables(resp.schema),
+            links: resp.links,
+            jpaLinks: resp.jpa_links ? resp.jpa_links : {},
+            loading: false
+          });
         }
       })
       .catch((e) => {
@@ -104,8 +111,19 @@ export default class Visualizer extends Component {
     /*
      Manipulate the links in order to create an array of relationships as goJS links. Return an array of links.
      */
+
+    const isInLinks = (data, link) => {
+      data.forEach((x) => {
+        if (x.from === link.from && x.to == link.to) {
+          return true;
+        }
+      });
+      return false;
+    };
+
     let data = [];
     const links = this.state.links;
+    const jpaLinks = this.state.jpaLinks;
     Object.keys(links).forEach((key) => {
       if (!this.state.schema[key]) return;
 
@@ -117,7 +135,22 @@ export default class Visualizer extends Component {
         link.to = table[i].referenced_table_name;
         link.text = "0..N";
         link.toText = "1";
-        data.push(link)
+        data.push(link);
+      }
+    });
+
+    Object.keys(jpaLinks).forEach((key) => {
+      if(!this.state.schema[key]) return;
+
+      for (let i = 0; i < jpaLinks[key].length; i++){
+        let table = jpaLinks[key];
+        let link = {};
+        link.from = table[i].table_name;
+        link.to = table[i].referenced_table_name;
+        link.text = "0..N";
+        link.toText = "1";
+        link.category = "JPA";
+        if(!isInLinks(data, link)) data.push(link);
       }
     });
     return data;
@@ -149,7 +182,7 @@ export default class Visualizer extends Component {
     return data;
   }
 
-  onObjectDoubleClicked(e){
+  onObjectDoubleClicked(e) {
     // console.log(e.subject);
   }
 
@@ -208,7 +241,8 @@ export default class Visualizer extends Component {
       <PersistPopoverContent nameSubmitCallback={this.formatNewLayout} layouts={this.state.layouts}/>
     );
 
-    const tableList = this.state.abstraction ? (<div></div>) : <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>;
+    const tableList = this.state.abstraction ? (<div></div>) :
+      <TableList schema={schema} tables={tables} onSchemaChange={this.onSchemaChange}/>;
 
     return (
       <div>
@@ -231,7 +265,10 @@ export default class Visualizer extends Component {
             <Popover content={layoutMenu} position={Position.BOTTOM} isModal="true">
               <button className="pt-button pt-minimal pt-icon-style">Layout</button>
             </Popover>
-            <button className="pt-button pt-minimal pt-icon-refresh" onClick={()=>{window.location.reload(true)}}>Reload</button>
+            <button className="pt-button pt-minimal pt-icon-refresh" onClick={() => {
+              window.location.reload(true)
+            }}>Reload
+            </button>
           </div>
         </nav>
         {tableList}
