@@ -230,6 +230,41 @@ export default class Canvas extends Component {
     );
     //endregion
 
+    //region jpaLinkTempl
+    let jpaLinkTemplate = $(go.Link, "Link",
+      {
+        selectionAdorned: true,
+        layerName: "Foreground",
+        reshapable: true,
+        routing: go.Link.AvoidsNodes,
+        corner: 5,
+        curve: go.Link.JumpOver
+      },
+      $(go.Shape,  // the link shape
+        {stroke: "#c51148", strokeWidth: 3}),
+      $(go.TextBlock,  // the "from" label
+        {
+          textAlign: "center",
+          font: "bold 14px sans-serif",
+          stroke: "#b31460",
+          segmentIndex: 0,
+          segmentOffset: new go.Point(NaN, NaN),
+          segmentOrientation: go.Link.OrientUpright
+        },
+        new go.Binding("text", "text")),
+      $(go.TextBlock,  // the "to" label
+        {
+          textAlign: "center",
+          font: "bold 14px sans-serif",
+          stroke: "#b31460",
+          segmentIndex: -1,
+          segmentOffset: new go.Point(NaN, NaN),
+          segmentOrientation: go.Link.OrientUpright
+        },
+        new go.Binding("text", "toText"))
+    );
+    //endregion
+
     let templateMap = new go.Map("string", go.Node);
     templateMap.add("", defaultTemplate);
     templateMap.add("entity", defaultTemplate);
@@ -238,6 +273,7 @@ export default class Canvas extends Component {
 
     let linkTemplateMap = new go.Map("string", go.Link);
     linkTemplateMap.add("", defaultLinkTemplate);
+    linkTemplateMap.add("JPA", jpaLinkTemplate);
     this.diagram.linkTemplateMap = linkTemplateMap;
 
     let data = this.state.tables;
