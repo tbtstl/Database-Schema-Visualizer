@@ -4,7 +4,7 @@ public class Employees {
   private static final long id;
 
   @ManyToOne(fetch=FetchType.EAGER)
-  @JoinColumn(name="first_name", reference_column="first_name", insertable=False, updatable=False)
+  @JoinColumn(name="customers", reference_column="first_name", insertable=False, updatable=False)
   private Customer customer;
 }
 
