@@ -82,6 +82,7 @@ export default class Canvas extends Component {
 
     const lightgrad = $(go.Brush, "Linear", {1: "#E6E6FA", 0: "#FFFAF0"});
 
+    //region templ
     const template =
       $(go.Panel, "Horizontal",
         $(go.Shape,
@@ -95,8 +96,9 @@ export default class Canvas extends Component {
           },
           new go.Binding("text", "name"))
       );
+    //endregion
 
-
+    //region defaultTempl
     let defaultTemplate = $(go.Node, "Auto",  // the whole node panel
       {
         selectionAdorned: true,
@@ -142,6 +144,9 @@ export default class Canvas extends Component {
       )  // end Table Panel
     );  // end Node
 
+    //endregion
+
+    //region relationshipTempl
     let relationshipTemplate = $(go.Node, "Auto",  // the whole node panel
       {
         selectionAdorned: true,
@@ -187,14 +192,11 @@ export default class Canvas extends Component {
       )  // end Table Panel
     );  // end Node
 
-    let templateMap = new go.Map("string", go.Node);
-    templateMap.add("", defaultTemplate);
-    templateMap.add("entity", defaultTemplate);
-    templateMap.add("relationship", relationshipTemplate);
-    this.diagram.nodeTemplateMap = templateMap;
+    //endregion
 
 
-    this.diagram.linkTemplate = $(go.Link, "Link", // the whole link panel
+    //region linkTempl
+    let defaultLinkTemplate = $(go.Link, "Link", // the whole link panel
       {
         selectionAdorned: true,
         layerName: "Foreground",
@@ -226,6 +228,17 @@ export default class Canvas extends Component {
         },
         new go.Binding("text", "toText"))
     );
+    //endregion
+
+    let templateMap = new go.Map("string", go.Node);
+    templateMap.add("", defaultTemplate);
+    templateMap.add("entity", defaultTemplate);
+    templateMap.add("relationship", relationshipTemplate);
+    this.diagram.nodeTemplateMap = templateMap;
+
+    let linkTemplateMap = new go.Map("string", go.Link);
+    linkTemplateMap.add("", defaultLinkTemplate);
+    this.diagram.linkTemplateMap = linkTemplateMap;
 
     let data = this.state.tables;
     let links = this.state.links;
