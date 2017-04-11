@@ -75,7 +75,16 @@ export default class App extends Component {
     // formData.append('javaSourceFiles', this.state.javaSourceFiles.)
     if(this.state.projectName.length > 0){
       let projects = this.state.projects;
-      Object.assign(projects, {[this.state.projectName]: form});
+      let cookieForm = {
+        host: this.state.host,
+        port: this.state.port,
+        dbName: this.state.dbName,
+        username: this.state.username,
+        password: this.state.password,
+        abstractionMode: this.state.abstractionMode
+      };
+      Object.assign(projects, {[this.state.projectName]: cookieForm});
+      console.log(projects);
       cookie.save('projects', projects, {path: '/'});
     }
 
